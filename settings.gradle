@@ -1,2 +1,3 @@
 include ':ftc_app'
+include ':ftc_app:FtcRobotController'
 include ':Avalanche'
