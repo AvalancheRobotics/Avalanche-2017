@@ -9,17 +9,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
+/* A port of the BasicDrive Class used for development and fun. */
 @TeleOp(name = "FunDrive", group = "TeleOp")
 public class FunDrive extends LinearOpMode {
 
+    private DcMotor motorLeftFront;
+    private DcMotor motorRightFront;
+    private DcMotor motorLeftBack;
+    private DcMotor motorRightBack;
+    private DriveTrainController driveTrain;
 
-    DcMotor motorLeftFront;
-    DcMotor motorRightFront;
-    DcMotor motorLeftBack;
-    DcMotor motorRightBack;
-    DriveTrainController driveTrain;
+    private double driveSpeed = 1.0;
+    private double turnSpeed = 0.2;
 
-    private final double CONSTANT_DRIVE_SPEED = 1;
+    private int countB = 0;
+    private int countBAlt = 0;
+    private int countX = 0;
+    private int countXAlt = 0;
 
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
@@ -49,29 +55,83 @@ public class FunDrive extends LinearOpMode {
 
         // Go go gadget robot!
         while (opModeIsActive()) {
+            telemetry.addData("Gamepad", gamepad1.toString());
+            telemetry.addData("Turn Speed", turnSpeed);
+            telemetry.addData("Drive Speed", driveSpeed);
 
-            driveTrain.setLeftDrivePower(gamepad1.left_stick_y);
+            boolean modifierKey = gamepad1.dpad_down;
 
-            driveTrain.setLeftDrivePower(gamepad1.right_stick_y);
+            driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
 
             if (gamepad1.a)
             {
-                playR2D2();
+                    driveTrain.setLeftDrivePower(driveSpeed);
+                    driveTrain.setRightDrivePower(driveSpeed);
             }
 
             if (gamepad1.b)
             {
-                //not yet implemented
+                if (modifierKey)
+                {
+                    countBAlt++;
+                    turnSpeed += 0.1;
+                    if (Double.compare(turnSpeed, 1.0) > 0)
+                    {
+                        turnSpeed = 1.0;
+                    }
+                }
+                else
+                {
+                    countB++;
+                    driveSpeed += 0.1;
+                    if (Double.compare(driveSpeed, 1.0) > 0)
+                    {
+                        driveSpeed = 1.0;
+                    }
+                }
+            }
+            else
+            {
+                countB = 0;
+                countBAlt = 0;
             }
 
             if (gamepad1.x)
             {
-                //not yet implemented
+                if (modifierKey)
+                {
+                    countXAlt++;
+                    turnSpeed -= 0.1;
+                    if (Double.compare(turnSpeed, 0.1) < 0)
+                    {
+                        turnSpeed = 0.1;
+                    }
+                }
+                else
+                {
+                    countX++;
+                    driveSpeed -= 0.1;
+                    if (Double.compare(driveSpeed, 0.1) < 0)
+                    {
+                        driveSpeed = 0.1;
+                    }
+                }
+            }
+            else
+            {
+                countX = 0;
+                countXAlt = 0;
             }
 
             if (gamepad1.y)
             {
-                //not yet implemented
+                if (modifierKey)
+                    playR2D2();
+                else
+                {
+                    driveTrain.setLeftDrivePower(-driveSpeed);
+                    driveTrain.setRightDrivePower(-driveSpeed);
+                }
             }
 
             if (gamepad1.dpad_down)
@@ -89,10 +149,31 @@ public class FunDrive extends LinearOpMode {
                 //not yet implemented
             }
 
-            if (gamepad1.dpad_up) {
+            if (gamepad1.dpad_up)
+            {
                 //not yet implemented
             }
 
+            //turn right
+            if (gamepad1.right_bumper) {
+                driveTrain.setLeftDrivePower(turnSpeed);
+                driveTrain.setRightDrivePower(-turnSpeed);
+            }
+
+            //turn left
+            if (gamepad1.left_bumper) {
+                driveTrain.setLeftDrivePower(-turnSpeed);
+                driveTrain.setRightDrivePower(turnSpeed);
+            }
+
+            if (!gamepad1.left_bumper && !gamepad1.right_bumper && !gamepad1.y && !gamepad1.a
+                    && ScaleInput.scale(gamepad1.left_stick_y) == 0
+                    && ScaleInput.scale(gamepad1.right_stick_y) == 0) {
+                driveTrain.setLeftDrivePower(0);
+                driveTrain.setRightDrivePower(0);
+            }
+
+            telemetry.update();
             idle();
 
         }

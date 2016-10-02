@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class MotorController {
     protected ArrayList<DcMotor> motors;
-    private ArrayList<Integer> encoderStartValues;
-    private boolean autoOverrideEnabled;
+    protected ArrayList<Integer> encoderStartValues;
+    protected boolean autoOverrideEnabled;
 
     public MotorController() {
         motors = new ArrayList<>();

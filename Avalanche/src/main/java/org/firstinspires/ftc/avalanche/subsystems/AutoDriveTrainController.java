@@ -17,17 +17,17 @@ import org.firstinspires.ftc.avalanche.utilities.ColorReader;
 public class AutoDriveTrainController extends MotorController {
 
     static final double COUNTS_PER_MOTOR_REV = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double DRIVE_GEAR_REDUCTION = 2.0 ;     // This is < 1.0 if geared UP
-    static final double WHEEL_DIAMETER_INCHES = 4.0 ;     // For figuring circumference
+    static final double DRIVE_GEAR_REDUCTION = 1.0 ;     // This is < 1.0 if geared UP
+    static final double ODOMETER_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
+            (ODOMETER_DIAMETER_INCHES * 3.1415);
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
     static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
     static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
 
-    static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
+    static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
     static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
     static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
 
@@ -39,10 +39,13 @@ public class AutoDriveTrainController extends MotorController {
     private int leftMotorBackIndex;
     private int leftMotorFrontIndex;
 
-    public void driveToLine(ColorSensor colorSensor, double speed) throws InterruptedException
+    public void driveToLine(ColorSensor colorSensor, double speed, double timeoutMillis) throws InterruptedException
     {
         setPower(speed);
-        while (ColorReader.isWhite(initLight, colorSensor.red() + colorSensor.blue()));
+
+        long startTime = System.currentTimeMillis();
+
+        while (ColorReader.isWhite(initLight, colorSensor.red() + colorSensor.blue()) && System.currentTimeMillis() - startTime < timeoutMillis)
         {
             linearOpMode.idle();
         }
