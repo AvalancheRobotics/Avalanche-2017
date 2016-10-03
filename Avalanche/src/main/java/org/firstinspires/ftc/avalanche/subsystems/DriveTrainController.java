@@ -26,6 +26,8 @@ public class DriveTrainController extends MotorController {
     //Constructors
 
     public DriveTrainController(DcMotor leftBack, DcMotor rightBack, DcMotor leftFront, DcMotor rightFront) {
+
+
         add(leftBack);
         add(rightBack);
         add(leftFront);
@@ -34,6 +36,8 @@ public class DriveTrainController extends MotorController {
         //Reverse right motors because gearing is flipped
         reverseMotors(1);
         reverseMotors(3);
+
+        setZeroPowerBehavior(true);
 
         usingTankDrive = true;
     }
@@ -44,6 +48,8 @@ public class DriveTrainController extends MotorController {
 
         //Reverse right motor because gearing is flipped
         reverseMotors(1);
+
+        setZeroPowerBehavior(true);
 
         usingTankDrive = true;
     }
@@ -139,6 +145,24 @@ public class DriveTrainController extends MotorController {
         totalOdometerReading = totalOdometerReading / motors.size();
 
         return (int) Math.round(totalOdometerReading / TICKS_PER_ROTATION * (WHEEL_DIAMETER * Math.PI));
+    }
+
+    public void setZeroPowerBehavior(boolean brake) {
+        if (brake) {
+            for (int i = 0; i < motors.size(); i++) {
+                if (!motors.get(i).getZeroPowerBehavior().equals(DcMotor.ZeroPowerBehavior.BRAKE)) {
+                    motors.get(i).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                }
+            }
+        }
+
+        else {
+            for (int i = 0; i < motors.size(); i++) {
+                if (!motors.get(i).getZeroPowerBehavior().equals(DcMotor.ZeroPowerBehavior.FLOAT)) {
+                    motors.get(i).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                }
+            }
+        }
     }
 
 }
