@@ -43,41 +43,27 @@ public class BasicDrive extends LinearOpMode {
 
         waitForStart();
 
-        //Test our media player
-        //sanic.start();
+        sanic.start();
 
         // Go go gadget robot!
         while (opModeIsActive()) {
-
-
-            if (ScaleInput.scale(gamepad1.left_trigger + gamepad1.right_trigger) > 0) {
-                if (gamepad1.left_trigger > gamepad1.right_trigger) {
-                    driveTrain.manualDrive(-gamepad1.left_trigger, -gamepad1.left_trigger);
-                } else {
-                    driveTrain.manualDrive(gamepad1.right_trigger, gamepad1.right_trigger);
-                }
+            if (gamepad1.a) {
+                sanic.stop();
             }
 
+            driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
 
-            //turn right
-            if (gamepad1.right_bumper) {
-                driveTrain.setLeftDrivePower(.2);
-                driveTrain.setRightDrivePower(-.2);
-            }
-
-            //turn left
             if (gamepad1.left_bumper) {
-                driveTrain.setLeftDrivePower(-.2);
-                driveTrain.setRightDrivePower(.2);
+                driveTrain.setLeftDrivePower(.5);
+                driveTrain.setRightDrivePower(-.5);
             }
 
-            if (!gamepad1.left_bumper && !gamepad1.right_bumper && !(ScaleInput.scale(gamepad1.left_trigger + gamepad1.right_trigger) > 0)) {
-                driveTrain.setLeftDrivePower(0);
-                driveTrain.setRightDrivePower(0);
+            if (gamepad1.right_bumper) {
+                driveTrain.setLeftDrivePower(-.5);
+                driveTrain.setRightDrivePower(.5);
             }
 
             idle();
-
         }
     }
 }
