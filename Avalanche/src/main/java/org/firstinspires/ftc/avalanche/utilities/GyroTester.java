@@ -9,6 +9,8 @@ import org.firstinspires.ftc.avalanche.R;
 
 /**
  * Created by Austin on 9/13/2016.
+ * The purpose of this program is to find out how much
+ * the gyroscope drifts so we can decide whether or not to apply a low pass filter.
  */
 @TeleOp(name = "Gyro Tester", group = "Utilities")
 public class GyroTester extends LinearOpMode {
