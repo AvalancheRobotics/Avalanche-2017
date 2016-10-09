@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.avalanche.desktop;
+package org.firstinspires.ftc.avalanche_desktop;
 
-import org.firstinspires.ftc.avalanche.desktop.*;
+import org.firstinspires.ftc.avalanche_desktop.*;
 
 //import org.avalancherobotics.desktop.VirtualOpMode;
 

@@ -50,8 +50,8 @@ public class AutoDriveTrainController {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
-    static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
+    public static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
+    public static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
 
     static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
     static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
@@ -64,7 +64,6 @@ public class AutoDriveTrainController {
     private DcMotor odometer;
     private ColorSensor colorSensor;
 
-
     //Example of how to run the AutoDriveTrainController
     /*
     public void init() throws InterruptedException
@@ -75,16 +74,16 @@ public class AutoDriveTrainController {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
-        autoDriveTrain.gyroDrive(DRIVE_SPEED, 48.0, 0.0);        // Drive FWD 48 inches
-        autoDriveTrain.gyroTurn(TURN_SPEED, -45.0);              // Turn  CCW to -45 Degrees
-        autoDriveTrain.gyroHold(TURN_SPEED, -45.0, 0.5);         // Hold -45 Deg heading for a 1/2 second
-        autoDriveTrain.gyroTurn(TURN_SPEED, 45.0);               // Turn  CW  to  45 Degrees
-        autoDriveTrain.gyroHold(TURN_SPEED, 45.0, 0.5);          // Hold  45 Deg heading for a 1/2 second
-        autoDriveTrain.gyroTurn(TURN_SPEED, 0.0);                // Turn  CW  to   0 Degrees
-        autoDriveTrain.gyroHold(TURN_SPEED, 0.0, 1.0);           // Hold  0 Deg heading for a 1 second
-        autoDriveTrain.gyroDrive(DRIVE_SPEED, -48.0, 0.0);       // Drive REV 48 inches
-        autoDriveTrain.gyroHold(TURN_SPEED, 0.0, 0.5);           // Hold  0 Deg heading for a 1/2 second
-        autoDriveTrain.driveToLine(DRIVE_SPEED, 8000);           //Drive at the set speed until 8 seconds has passed or until you reach a white line
+        autoDriveTrain.gyroDrive(autoDriveTrain.DRIVE_SPEED, 48.0, 0.0);        // Drive FWD 48 inches
+        autoDriveTrain.gyroTurn(autoDriveTrain.TURN_SPEED, -45.0);              // Turn  CCW to -45 Degrees
+        autoDriveTrain.gyroHold(autoDriveTrain.TURN_SPEED, -45.0, 0.5);         // Hold -45 Deg heading for a 1/2 second
+        autoDriveTrain.gyroTurn(autoDriveTrain.TURN_SPEED, 45.0);               // Turn  CW  to  45 Degrees
+        autoDriveTrain.gyroHold(autoDriveTrain.TURN_SPEED, 45.0, 0.5);          // Hold  45 Deg heading for a 1/2 second
+        autoDriveTrain.gyroTurn(autoDriveTrain.TURN_SPEED, 0.0);                // Turn  CW  to   0 Degrees
+        autoDriveTrain.gyroHold(autoDriveTrain.TURN_SPEED, 0.0, 1.0);           // Hold  0 Deg heading for a 1 second
+        autoDriveTrain.gyroDrive(autoDriveTrain.DRIVE_SPEED, -48.0, 0.0);       // Drive REV 48 inches
+        autoDriveTrain.gyroHold(autoDriveTrain.TURN_SPEED, 0.0, 0.5);           // Hold  0 Deg heading for a 1/2 second
+        autoDriveTrain.driveToLine(autoDriveTrain.DRIVE_SPEED, 8000);           //Drive at the set speed until 8 seconds has passed or until you reach a white line
     }
     */
 
