@@ -54,11 +54,8 @@ public class FunDrive extends LinearOpMode {
         //sanic.start();
 
         // Go go gadget robot!
-        while (opModeIsActive()) {
-            telemetry.addData("Gamepad", gamepad1.toString());
-            telemetry.addData("Turn Speed", turnSpeed);
-            telemetry.addData("Drive Speed", driveSpeed);
-
+        while (opModeIsActive())
+        {
             boolean modifierKey = gamepad1.dpad_down;
 
             driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
@@ -74,19 +71,26 @@ public class FunDrive extends LinearOpMode {
                 if (modifierKey)
                 {
                     countBAlt++;
-                    turnSpeed += 0.1;
-                    if (Double.compare(turnSpeed, 1.0) > 0)
+                    if (countBAlt == 250)
                     {
-                        turnSpeed = 1.0;
+                        turnSpeed += 0.1;
+                        if (Double.compare(turnSpeed, 1.0) > 0)
+                        {
+                            turnSpeed = 1.0;
+                        }
+                        countBAlt = 0;
                     }
                 }
                 else
                 {
                     countB++;
-                    driveSpeed += 0.1;
-                    if (Double.compare(driveSpeed, 1.0) > 0)
-                    {
-                        driveSpeed = 1.0;
+                    if (countB == 250) {
+                        driveSpeed += 0.1;
+                        if (Double.compare(driveSpeed, 1.0) > 0)
+                        {
+                            driveSpeed = 1.0;
+                        }
+                        countB = 0;
                     }
                 }
             }
@@ -101,19 +105,24 @@ public class FunDrive extends LinearOpMode {
                 if (modifierKey)
                 {
                     countXAlt++;
-                    turnSpeed -= 0.1;
-                    if (Double.compare(turnSpeed, 0.1) < 0)
-                    {
-                        turnSpeed = 0.1;
+                    if (countXAlt == 250) {
+                        turnSpeed -= 0.1;
+                        if (Double.compare(turnSpeed, 0.1) < 0)
+                        {
+                            turnSpeed = 0.1;
+                        }
+                        countXAlt = 0;
                     }
                 }
                 else
                 {
                     countX++;
-                    driveSpeed -= 0.1;
-                    if (Double.compare(driveSpeed, 0.1) < 0)
-                    {
-                        driveSpeed = 0.1;
+                    if (countX == 250) {
+                        driveSpeed -= 0.1;
+                        if (Double.compare(driveSpeed, 0.1) < 0)
+                        {
+                            driveSpeed = 0.1;
+                        }
                     }
                 }
             }
@@ -173,6 +182,17 @@ public class FunDrive extends LinearOpMode {
                 driveTrain.setRightDrivePower(0);
             }
 
+            driveSpeed = roundToOneDec(driveSpeed);
+            turnSpeed = roundToOneDec(turnSpeed);
+
+            telemetry.addData("countB", countB);
+            telemetry.addData("countBAlt", countBAlt);
+            telemetry.addData("countX", countX);
+            telemetry.addData("countXAlt", countXAlt);
+            telemetry.addData("Gamepad", gamepad1.toString());
+            telemetry.addData("Turn Speed", turnSpeed);
+            telemetry.addData("Drive Speed", driveSpeed);
+            telemetry.addLine("Test Line");
             telemetry.update();
             idle();
 
@@ -205,6 +225,11 @@ public class FunDrive extends LinearOpMode {
         }
 
         r2d2.start();
+    }
+
+    public static double roundToOneDec(double value)
+    {
+        return (double)Math.round(value * 10d) / 10d;
     }
 }
 
