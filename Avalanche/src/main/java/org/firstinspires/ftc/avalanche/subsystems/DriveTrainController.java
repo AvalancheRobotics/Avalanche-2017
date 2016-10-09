@@ -2,6 +2,10 @@ package org.firstinspires.ftc.avalanche.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 /**
@@ -25,13 +29,13 @@ public class DriveTrainController extends MotorController {
 
     //Constructors
 
-    public DriveTrainController(DcMotor leftBack, DcMotor rightBack, DcMotor leftFront, DcMotor rightFront) {
+    public DriveTrainController(MotorLeftBack motorLeftBack, MotorRightBack motorRightBack, MotorLeftFront motorLeftFront, MotorRightFront motorRightFront) {
 
 
-        add(leftBack);
-        add(rightBack);
-        add(leftFront);
-        add(rightFront);
+        add(motorLeftBack.getMotor());
+        add(motorRightBack.getMotor());
+        add(motorLeftFront.getMotor());
+        add(motorRightFront.getMotor());
 
         //Reverse right motors because gearing is flipped
         reverseMotors(1);

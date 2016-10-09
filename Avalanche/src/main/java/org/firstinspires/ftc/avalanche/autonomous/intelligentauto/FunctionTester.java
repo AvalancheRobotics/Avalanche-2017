@@ -4,6 +4,10 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 
 
@@ -24,7 +28,7 @@ public class FunctionTester extends LinearOpMode {
         store.gyro = hardwareMap.gyroSensor.get("gyro");
 
         // Initalize Drivetrain
-        store.driveTrain = new DriveTrainController(hardwareMap.dcMotor.get("LeftBack"), hardwareMap.dcMotor.get("RightBack"), hardwareMap.dcMotor.get("LeftFront"), hardwareMap.dcMotor.get("RightFront"));
+        store.driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap) , new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
 
         telemetry.addData("size: ", store.driveTrain.size());
         telemetry.update();

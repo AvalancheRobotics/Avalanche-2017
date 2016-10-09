@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -14,20 +18,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ControllerTester extends LinearOpMode {
 
 
-    DcMotor motorLeftFront;
-    DcMotor motorRightFront;
-    DcMotor motorLeftBack;
-    DcMotor motorRightBack;
     DriveTrainController driveTrain;
 
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
-        motorLeftBack = hardwareMap.dcMotor.get("LeftBack");
-        motorLeftFront = hardwareMap.dcMotor.get("LeftFront");
-        motorRightBack = hardwareMap.dcMotor.get("RightBack");
-        motorRightFront = hardwareMap.dcMotor.get("RightFront");
-
-        driveTrain = new DriveTrainController(motorLeftFront, motorRightFront, motorLeftBack, motorRightBack);
+        driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
 
         // Reset encoders
         driveTrain.resetEncoders();
