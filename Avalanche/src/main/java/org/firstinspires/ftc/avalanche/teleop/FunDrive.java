@@ -34,7 +34,7 @@ public class FunDrive extends LinearOpMode {
         motorRightBack = hardwareMap.dcMotor.get("RightBack");
         motorRightFront = hardwareMap.dcMotor.get("RightFront");
 
-        driveTrain = new DriveTrainController(motorLeftFront, motorRightFront, motorLeftBack, motorRightBack);
+        driveTrain = new DriveTrainController(motorLeftBack, motorRightBack, motorLeftFront, motorRightFront);
 
         // Reset encoders
         driveTrain.resetEncoders();
