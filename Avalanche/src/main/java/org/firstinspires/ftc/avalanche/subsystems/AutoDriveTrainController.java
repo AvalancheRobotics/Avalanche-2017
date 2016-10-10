@@ -7,10 +7,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.avalanche.R;
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.utilities.ColorReader;
 
 /**
@@ -84,8 +89,7 @@ public class AutoDriveTrainController {
 
 
     //When adding motors to array list, as a general rule leftBack first, then rightBack, leftFront, and finally rightFront
-    public AutoDriveTrainController(ColorSensor colorSensor, LinearOpMode linearOpMode, ModernRoboticsI2cGyro gyro,
-                                    DcMotor leftBack, DcMotor rightBack, DcMotor leftFront, DcMotor rightFront, DcMotor odometer) throws InterruptedException {
+    public AutoDriveTrainController(ColorSensor colorSensor, LinearOpMode linearOpMode, ModernRoboticsI2cGyro gyro, HardwareMap hardwareMap, DcMotor odometer) throws InterruptedException {
         this.colorSensor = colorSensor;
         this.colorSensor.enableLed(true);
         this.linearOpMode = linearOpMode;
@@ -98,7 +102,7 @@ public class AutoDriveTrainController {
             linearOpMode.idle();
         }
 
-        driveTrain = new DriveTrainController(leftBack, rightBack, leftFront, rightFront);
+        driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
 
         this.odometer = odometer;
 

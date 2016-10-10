@@ -6,7 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
+import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 
 @TeleOp(name = "BasicDrive", group = "TeleOp")
@@ -28,7 +31,7 @@ public class BasicDrive extends LinearOpMode {
         motorRightBack = hardwareMap.dcMotor.get("RightBack");
         motorRightFront = hardwareMap.dcMotor.get("RightFront");
 
-        driveTrain = new DriveTrainController(motorLeftBack, motorRightBack, motorLeftFront, motorRightFront);
+        driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
 
         // Reset encoders
         driveTrain.resetEncoders();
