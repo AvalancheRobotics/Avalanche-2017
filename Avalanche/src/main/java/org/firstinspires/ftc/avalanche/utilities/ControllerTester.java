@@ -4,15 +4,12 @@ import android.media.MediaPlayer;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
-import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp(name = "Controller Tester", group = "Utilities")
 public class ControllerTester extends LinearOpMode {

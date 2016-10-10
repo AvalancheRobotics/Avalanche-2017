@@ -10,7 +10,6 @@ import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
-import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 
 @TeleOp(name = "BasicDrive", group = "TeleOp")
