@@ -64,6 +64,10 @@ public class AutoDriveTrainController {
     private DcMotor odometer;
     private ColorSensor colorSensor;
 
+    private long startTime;
+    private int offset;
+    private int drift;
+
     //Example of how to run the AutoDriveTrainController
     /*
     public void init() throws InterruptedException
@@ -95,12 +99,16 @@ public class AutoDriveTrainController {
         this.linearOpMode = linearOpMode;
         this.gyro = gyro;
 
-        gyro.calibrate();
-
-        while (gyro.isCalibrating()) {
+        /////////////////////////////////////////
+        gyro.calibrate();                //
+        //
+        while (gyro.isCalibrating()) {    // Calibrating Gyro
             Thread.sleep(50);
-            linearOpMode.idle();
         }
+        //
+        Thread.sleep(5000);                    //
+        drift = gyro.getHeading(); //
+        /////////////////////////////////////////
 
         driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
 
@@ -123,6 +131,10 @@ public class AutoDriveTrainController {
         initDone.start();
     }
 
+    public void callAtBeginningOfOpModeAfterInit() {
+        startTime = System.nanoTime();
+        offset = gyro.getHeading();
+    }
 
     //Program automatically drives to white line while always facing the same direction
     //Uses gyroscope to maintain the same direction so robot doesn't drift off course
@@ -143,7 +155,7 @@ public class AutoDriveTrainController {
 
         driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        angle = gyro.getIntegratedZValue();
+        angle = getCorrectedHeading();
 
         driveTrain.setLeftDrivePower(speed);
         driveTrain.setRightDrivePower(speed);
@@ -433,7 +445,6 @@ public class AutoDriveTrainController {
      *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                  If a relative angle is required, add/subtract from current heading.
      * @param PCoeff    Proportional Gain coefficient
-     * @return
      */
     boolean onHeading(double speed, double angle, double PCoeff) {
         double   error ;
@@ -444,6 +455,9 @@ public class AutoDriveTrainController {
 
         // determine turn power based on +/- error
         error = getError(angle);
+
+        linearOpMode.telemetry.addData("currentAngle", getError(angle));
+        linearOpMode.telemetry.update();
 
         if (Math.abs(error) <= HEADING_THRESHOLD) {
             steer = 0.0;
@@ -479,7 +493,7 @@ public class AutoDriveTrainController {
         double robotError;
 
         // calculate error in -179 to +180 range
-        robotError = targetAngle - gyro.getIntegratedZValue();
+        robotError = targetAngle - getCorrectedHeading();
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
@@ -493,6 +507,73 @@ public class AutoDriveTrainController {
      */
     public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
+    }
+
+    //Pivots to the set angle
+    //NOTE: No other tasks will be performed while turning, LOCKS THREAD
+    //NOTE: Angle is ABSOLUTE ANGLE- Angles are relative to starting position, not current position
+    //Angle starts at 0 at the beginning of TeleOp, and all other angles are based off of that
+    public void pivotToAngle(int angle, double speed) throws InterruptedException {
+        int heading = getCorrectedHeading();
+
+        double power;
+        double proportionalConst = 0.006;
+
+        double topCeiling = speed;
+        double bottomCeiling = -speed;
+        double topFloor = .2;
+        double bottomFloor = -.2;
+
+        int target = angle;
+        while (target > 359)
+            target = target - 360;
+        while (target < 0)
+            target = target + 360;
+
+        while (heading != target) {
+
+            power = Math.abs((target - heading) * proportionalConst);
+
+            if (power > topCeiling)
+                power = topCeiling;
+            else if (power < bottomCeiling)
+                power = bottomCeiling;
+            else if (power < topFloor && power > 0)
+                power = topFloor;
+            else if (power > bottomFloor && power < 0)
+                power = bottomFloor;
+
+
+            boolean tarGreater = target - heading > 0;
+
+            if ((tarGreater && target - heading > 180) || (!tarGreater && target - heading < 180)) {
+                driveTrain.setRightDrivePower(power);
+                driveTrain.setLeftDrivePower(-power);
+            } else {
+                driveTrain.setRightDrivePower(-power);
+                driveTrain.setLeftDrivePower(power);
+            }
+
+
+            heading = getCorrectedHeading();
+
+            linearOpMode.idle();
+        }
+
+        driveTrain.setRightDrivePower(0);
+        driveTrain.setLeftDrivePower(0);
+    }
+
+    //Returns corrected gyro angle
+    private int getCorrectedHeading() {
+        double elapsedSeconds = (System.nanoTime() - startTime) / 1000000000.0;
+        int totalDrift = (int) (elapsedSeconds / 5 * drift);
+        int targetHeading = gyro.getHeading() - offset - totalDrift;
+        while (targetHeading > 359)               //
+            targetHeading = targetHeading - 360; // Allows value to "wrap around"
+        while (targetHeading < 0)                 // since values can only be 0-359
+            targetHeading = targetHeading + 360; //
+        return targetHeading;
     }
 
 }

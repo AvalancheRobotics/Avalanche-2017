@@ -48,6 +48,9 @@ public class BeaconPresser {
         //Set initial values
         this.extendServo.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
         this.selectorServo.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
+
+        this.colorLeft.enableLed(false);
+        this.colorRight.enableLed(false);
     }
 
     public void setPresserToDrivePosition() {

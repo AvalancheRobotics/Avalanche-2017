@@ -16,7 +16,7 @@ public class OdometerTester extends LinearOpMode {
 
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
-        motor = hardwareMap.dcMotor.get("motor");
+        motor = hardwareMap.dcMotor.get("Odometer");
     }
 
     @Override

@@ -19,9 +19,10 @@ public class GyroTester extends LinearOpMode {
 
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
-        gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
+        gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("Gyro");
 
         gyro.calibrate();
+
 
         long startTime = System.currentTimeMillis();
 
