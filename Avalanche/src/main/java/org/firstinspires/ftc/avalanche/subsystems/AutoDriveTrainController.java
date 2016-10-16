@@ -99,16 +99,12 @@ public class AutoDriveTrainController {
         this.linearOpMode = linearOpMode;
         this.gyro = gyro;
 
-        /////////////////////////////////////////
-        gyro.calibrate();                //
-        //
+        gyro.calibrate();
         while (gyro.isCalibrating()) {    // Calibrating Gyro
             Thread.sleep(50);
         }
-        //
-        Thread.sleep(5000);                    //
-        drift = gyro.getHeading(); //
-        /////////////////////////////////////////
+        Thread.sleep(5000);
+        drift = gyro.getHeading();
 
         driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
 
