@@ -11,6 +11,7 @@ import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
+import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 
 @TeleOp(name = "BasicDrive", group = "TeleOp")
 public class BasicDrive extends LinearOpMode {
@@ -21,6 +22,7 @@ public class BasicDrive extends LinearOpMode {
     DcMotor motorLeftBack;
     DcMotor motorRightBack;
     DriveTrainController driveTrain;
+    ControllerConfig controllerConfig;
 
     MediaPlayer sanic;
 
@@ -33,6 +35,7 @@ public class BasicDrive extends LinearOpMode {
 
         driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
 
+        controllerConfig = new ControllerConfig(gamepad1, gamepad2);
         // Reset encoders
         driveTrain.resetEncoders();
 
@@ -54,7 +57,7 @@ public class BasicDrive extends LinearOpMode {
                 sanic.stop();
             }
 
-            driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+            driveTrain.manualDrive(controllerConfig.LTrack(), controllerConfig.RTrack());
 
             if (gamepad1.left_bumper) {
                 driveTrain.setLeftDrivePower(.5);

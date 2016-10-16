@@ -11,11 +11,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 
-public class ControllerManip {
+public class ControllerConfig {
     Gamepad gamepad1;
     Gamepad gamepad2;
     //Whenever a button on the gamepad is used in a method, in can be replaced at the driver's discretion.
-    public ControllerManip(Gamepad gamepad1, Gamepad gamepad2)
+    public ControllerConfig(Gamepad gamepad1, Gamepad gamepad2)
     {
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
