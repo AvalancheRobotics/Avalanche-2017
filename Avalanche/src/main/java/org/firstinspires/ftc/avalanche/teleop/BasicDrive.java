@@ -22,7 +22,6 @@ public class BasicDrive extends LinearOpMode {
     DcMotor motorRightBack;
     DriveTrainController driveTrain;
 
-    MediaPlayer sanic;
 
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
@@ -36,7 +35,6 @@ public class BasicDrive extends LinearOpMode {
         // Reset encoders
         driveTrain.resetEncoders();
 
-        sanic = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.sanic);
     }
 
     @Override
@@ -46,13 +44,10 @@ public class BasicDrive extends LinearOpMode {
 
         waitForStart();
 
-        sanic.start();
 
         // Go go gadget robot!
         while (opModeIsActive()) {
-            if (gamepad1.a) {
-                sanic.stop();
-            }
+
 
             driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
 

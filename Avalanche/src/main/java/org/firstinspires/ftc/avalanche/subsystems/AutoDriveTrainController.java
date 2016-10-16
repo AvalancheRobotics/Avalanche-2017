@@ -547,11 +547,11 @@ public class AutoDriveTrainController {
             boolean tarGreater = target - heading > 0;
 
             if ((tarGreater && target - heading > 180) || (!tarGreater && target - heading < 180)) {
-                driveTrain.setRightDrivePower(power);
-                driveTrain.setLeftDrivePower(-power);
-            } else {
                 driveTrain.setRightDrivePower(-power);
                 driveTrain.setLeftDrivePower(power);
+            } else {
+                driveTrain.setRightDrivePower(power);
+                driveTrain.setLeftDrivePower(-power);
             }
 
 

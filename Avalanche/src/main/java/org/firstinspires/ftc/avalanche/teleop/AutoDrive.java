@@ -64,6 +64,8 @@ public class AutoDrive extends LinearOpMode {
 
         waitForStart();
 
+        autoDriveTrain.callAtBeginningOfOpModeAfterInit();
+
         // Go go gadget robot!
         while (opModeIsActive()) {
 

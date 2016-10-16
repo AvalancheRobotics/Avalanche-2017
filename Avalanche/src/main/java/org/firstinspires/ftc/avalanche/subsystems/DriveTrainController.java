@@ -79,6 +79,10 @@ public class DriveTrainController extends MotorController {
                         runToPosition(i, 1, getEncoderValue(i));
                     }
                 }
+                else {
+                    setLeftDrivePower(0);
+                    setRightDrivePower(0);
+                }
             } else {
                 setLeftDrivePower(ScaleInput.scale(leftInput));
                 setRightDrivePower(ScaleInput.scale(rightInput));
