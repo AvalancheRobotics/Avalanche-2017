@@ -19,7 +19,6 @@ import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 @TeleOp(name = "AutoDrive", group = "TeleOp")
 public class AutoDrive extends LinearOpMode {
 
-
     private AutoDriveTrainController autoDriveTrain;
     ColorSensor colorSensor;
     ModernRoboticsI2cGyro gyro;
@@ -63,6 +62,8 @@ public class AutoDrive extends LinearOpMode {
         hardwareMapping();
 
         waitForStart();
+
+        autoDriveTrain.callAtBeginningOfOpModeAfterInit();
 
         // Go go gadget robot!
         while (opModeIsActive()) {
