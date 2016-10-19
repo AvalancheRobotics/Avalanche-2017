@@ -14,7 +14,7 @@ import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 
 @TeleOp(name = "BasicDrive", group = "TeleOp")
-public class BasicDrive extends LinearOpMode {
+public class BasicDrive extends LinearOpMode implements ControllerConfig{
 
 
     DcMotor motorLeftFront;
@@ -22,7 +22,6 @@ public class BasicDrive extends LinearOpMode {
     DcMotor motorLeftBack;
     DcMotor motorRightBack;
     DriveTrainController driveTrain;
-    ControllerConfig controllerConfig;
 
 
     //Initialize and Map All Hardware
@@ -33,8 +32,6 @@ public class BasicDrive extends LinearOpMode {
         motorRightFront = hardwareMap.dcMotor.get("RightFront");
 
         driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
-
-        controllerConfig = new ControllerConfig(gamepad1, gamepad2);
         // Reset encoders
         driveTrain.resetEncoders();
 
@@ -52,7 +49,7 @@ public class BasicDrive extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            driveTrain.manualDrive(controllerConfig.LTrack(), controllerConfig.RTrack());
+            driveTrain.manualDrive(LTrack(), RTrack());
 
             if (gamepad1.left_bumper) {
                 driveTrain.setLeftDrivePower(.5);
@@ -66,6 +63,31 @@ public class BasicDrive extends LinearOpMode {
 
             idle();
         }
+    }
+    public float RTrack()
+    {
+        return gamepad1.right_stick_y;
+
+    }
+    public float LTrack()
+    {
+        return gamepad1.left_stick_y;
+    }
+    public boolean HarvesterButtonPressed()
+    {
+        return gamepad2.a;
+    }
+    public boolean ShooterButtonPressed()
+    {
+        return gamepad2.y;
+    }
+    public boolean LeftButtonPresserButtonPressed()
+    {
+        return gamepad2.dpad_left;
+    }
+    public boolean RightButtonPresserButtonPressed()
+    {
+        return gamepad2.dpad_right;
     }
 }
 

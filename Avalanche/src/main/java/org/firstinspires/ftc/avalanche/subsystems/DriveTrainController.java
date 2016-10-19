@@ -38,8 +38,8 @@ public class DriveTrainController extends MotorController {
         add(motorRightFront.getMotor());
 
         //Reverse right motors because gearing is flipped
-        reverseMotors(1);
-        reverseMotors(3);
+        reverseMotors(0);
+        reverseMotors(2);
 
         setZeroPowerBehavior(true);
 

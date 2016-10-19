@@ -43,6 +43,8 @@ public class FunDrive extends LinearOpMode {
         // Reset encoders
         driveTrain.resetEncoders();
 
+        driveTrain.setControlMode(true);
+
         playR2D2();
     }
 
@@ -62,12 +64,14 @@ public class FunDrive extends LinearOpMode {
         {
             boolean modifierKey = gamepad1.dpad_down;
 
-            driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+            if (ScaleInput.scale(gamepad1.left_stick_y) != 0
+                    || ScaleInput.scale(gamepad1.right_stick_y) != 0)
+            driveTrain.manualDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
 
             if (gamepad1.a)
             {
-                    driveTrain.setLeftDrivePower(driveSpeed);
-                    driveTrain.setRightDrivePower(driveSpeed);
+                    driveTrain.setLeftDrivePower(-driveSpeed);
+                    driveTrain.setRightDrivePower(-driveSpeed);
             }
 
             if (gamepad1.b)
@@ -142,8 +146,8 @@ public class FunDrive extends LinearOpMode {
                     playR2D2();
                 else
                 {
-                    driveTrain.setLeftDrivePower(-driveSpeed);
-                    driveTrain.setRightDrivePower(-driveSpeed);
+                    driveTrain.setLeftDrivePower(driveSpeed);
+                    driveTrain.setRightDrivePower(driveSpeed);
                 }
             }
 
@@ -169,14 +173,14 @@ public class FunDrive extends LinearOpMode {
 
             //turn right
             if (gamepad1.right_bumper) {
-                driveTrain.setLeftDrivePower(turnSpeed);
-                driveTrain.setRightDrivePower(-turnSpeed);
+                driveTrain.setLeftDrivePower(-turnSpeed);
+                driveTrain.setRightDrivePower(turnSpeed);
             }
 
             //turn left
             if (gamepad1.left_bumper) {
-                driveTrain.setLeftDrivePower(-turnSpeed);
-                driveTrain.setRightDrivePower(turnSpeed);
+                driveTrain.setLeftDrivePower(turnSpeed);
+                driveTrain.setRightDrivePower(-turnSpeed);
             }
 
             if (!gamepad1.left_bumper && !gamepad1.right_bumper && !gamepad1.y && !gamepad1.a
@@ -196,7 +200,6 @@ public class FunDrive extends LinearOpMode {
             telemetry.addData("Gamepad", gamepad1.toString());
             telemetry.addData("Turn Speed", turnSpeed);
             telemetry.addData("Drive Speed", driveSpeed);
-            telemetry.addLine("Test Line");
             telemetry.update();
             idle();
 
