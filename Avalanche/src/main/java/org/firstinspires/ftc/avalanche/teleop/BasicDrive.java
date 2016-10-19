@@ -22,7 +22,6 @@ public class BasicDrive extends LinearOpMode {
     DcMotor motorLeftBack;
     DcMotor motorRightBack;
     DriveTrainController driveTrain;
-    ControllerConfig controllerConfig;
 
 
     //Initialize and Map All Hardware
@@ -33,8 +32,6 @@ public class BasicDrive extends LinearOpMode {
         motorRightFront = hardwareMap.dcMotor.get("RightFront");
 
         driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
-
-        controllerConfig = new ControllerConfig(gamepad1, gamepad2);
         // Reset encoders
         driveTrain.resetEncoders();
 
@@ -52,7 +49,7 @@ public class BasicDrive extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            driveTrain.manualDrive(controllerConfig.LTrack(), controllerConfig.RTrack());
+            driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
 
             if (gamepad1.left_bumper) {
                 driveTrain.setLeftDrivePower(.5);
