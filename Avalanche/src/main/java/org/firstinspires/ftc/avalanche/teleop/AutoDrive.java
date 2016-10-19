@@ -69,11 +69,11 @@ public class AutoDrive extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.y) {
-                autoDriveTrain.gyroDrive(.6 , distance, 0.0);
+                autoDriveTrain.gyroDrive(.6 , distance, autoDriveTrain.getCorrectedHeading());
             }
 
             if (gamepad1.a) {
-                autoDriveTrain.gyroDrive(.6 , -distance, 0.0);
+                autoDriveTrain.gyroDrive(.6 , -distance, autoDriveTrain.getCorrectedHeading());
             }
 
             if (gamepad1.b)
@@ -88,12 +88,12 @@ public class AutoDrive extends LinearOpMode {
 
             if (gamepad1.left_bumper)
             {
-                distance -= .05;
+                distance -= .005;
             }
 
             if (gamepad1.right_bumper)
             {
-                distance += .05;
+                distance += .005;
             }
 
             if (gamepad1.dpad_up) {
@@ -105,6 +105,9 @@ public class AutoDrive extends LinearOpMode {
             }
 
             telemetry.addData("Distance", roundToOneDec(distance) + " inches");
+
+            telemetry.addData("odom" , odometer.getCurrentPosition());
+
             telemetry.update();
             idle();
         }
@@ -114,5 +117,6 @@ public class AutoDrive extends LinearOpMode {
     {
         return (double)Math.round(value * 10d) / 10d;
     }
+
 }
 

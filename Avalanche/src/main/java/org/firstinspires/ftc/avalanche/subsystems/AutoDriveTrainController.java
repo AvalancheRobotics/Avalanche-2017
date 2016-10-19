@@ -303,6 +303,19 @@ public class AutoDriveTrainController {
                 driveTrain.setLeftDrivePower(leftSpeed);
                 driveTrain.setRightDrivePower(rightSpeed);
 
+                linearOpMode.telemetry.addData("leftSpeed", leftSpeed);
+                linearOpMode.telemetry.addData("rightSpeed", rightSpeed);
+                linearOpMode.telemetry.addData("leftSpeed", leftSpeed);
+                linearOpMode.telemetry.addData("error", error);
+                linearOpMode.telemetry.addData("tickstraveled", ticksTraveledOdometer);
+                linearOpMode.telemetry.addData("totalodomticks", totalOdometerTicks);
+                linearOpMode.telemetry.addData("wheelticksremaining", wheelTicksRemaining);
+
+
+                linearOpMode.telemetry.update();
+
+
+
                 // Allow time for other processes to run.
                 linearOpMode.idle();
             }
@@ -513,20 +526,18 @@ public class AutoDriveTrainController {
         int heading = getCorrectedHeading();
 
         double power;
-        double proportionalConst = 0.006;
+        double proportionalConst = 0.004;
 
         double topCeiling = speed;
         double bottomCeiling = -speed;
-        double topFloor = .2;
-        double bottomFloor = -.2;
+        double topFloor = .05;
+        double bottomFloor = -.05;
 
         int target = angle;
-        while (target > 359)
-            target = target - 360;
-        while (target < 0)
-            target = target + 360;
 
-        while (heading != target) {
+        while (! (heading > target - 1 && heading < target + 1) ) {
+
+            long currentTime = System.currentTimeMillis();
 
             power = Math.abs((target - heading) * proportionalConst);
 
@@ -539,36 +550,36 @@ public class AutoDriveTrainController {
             else if (power > bottomFloor && power < 0)
                 power = bottomFloor;
 
-
-            boolean tarGreater = target - heading > 0;
-
-            if ((tarGreater && target - heading > 180) || (!tarGreater && target - heading < 180)) {
-                driveTrain.setRightDrivePower(-power);
+            if (target > heading) {
                 driveTrain.setLeftDrivePower(power);
-            } else {
-                driveTrain.setRightDrivePower(power);
+                driveTrain.setRightDrivePower(-power);
+
+            }
+            else {
                 driveTrain.setLeftDrivePower(-power);
+                driveTrain.setRightDrivePower(power);
+
             }
 
 
             heading = getCorrectedHeading();
 
             linearOpMode.idle();
+
         }
 
-        driveTrain.setRightDrivePower(0);
         driveTrain.setLeftDrivePower(0);
+        driveTrain.setRightDrivePower(0);
+
     }
 
+
     //Returns corrected gyro angle
-    private int getCorrectedHeading() {
+    public int getCorrectedHeading() {
         double elapsedSeconds = (System.nanoTime() - startTime) / 1000000000.0;
         int totalDrift = (int) (elapsedSeconds / 5 * drift);
-        int targetHeading = gyro.getHeading() - offset - totalDrift;
-        while (targetHeading > 359)               //
-            targetHeading = targetHeading - 360; // Allows value to "wrap around"
-        while (targetHeading < 0)                 // since values can only be 0-359
-            targetHeading = targetHeading + 360; //
+        int targetHeading = gyro.getIntegratedZValue() - offset - totalDrift;
+
         return targetHeading;
     }
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.avalanche.utilities;
 
 import android.media.MediaPlayer;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,7 +28,7 @@ public class TurnTester extends LinearOpMode {
     long startTime;
     int drift;
     int offset;
-    GyroSensor gyro;
+    ModernRoboticsI2cGyro gyro;
 
     MediaPlayer sanic;
 
@@ -38,7 +39,7 @@ public class TurnTester extends LinearOpMode {
         motorRightBack = hardwareMap.dcMotor.get("RightBack");
         motorRightFront = hardwareMap.dcMotor.get("RightFront");
 
-        gyro = hardwareMap.gyroSensor.get("Gyro");
+        gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("Gyro");
 
         driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
 
@@ -85,10 +86,10 @@ public class TurnTester extends LinearOpMode {
             }
 
             if (gamepad1.a) {
-                telemetry.addData("turn 90", "start");
+                telemetry.addData("turn 180", "start");
                 telemetry.update();
                 pivotToAngle(180, .4);
-                telemetry.addData("turn 90", "fin");
+                telemetry.addData("turn 180", "fin");
                 telemetry.update();
             }
 
@@ -101,26 +102,92 @@ public class TurnTester extends LinearOpMode {
             }
 
             if (gamepad1.y) {
-                telemetry.addData("turn 90", "start");
+                telemetry.addData("turn 0", "start");
                 telemetry.update();
                 pivotToAngle(0, .4);
-                telemetry.addData("turn 90", "fin");
+                telemetry.addData("turn 0", "fin");
                 telemetry.update();
             }
 
             if (gamepad1.x) {
-                telemetry.addData("turn 90", "start");
+                telemetry.addData("turn 270", "start");
                 telemetry.update();
                 pivotToAngle(270, .4);
-                telemetry.addData("turn 90", "fin");
+                telemetry.addData("turn 270", "fin");
                 telemetry.update();
             }
+
+            telemetry.addData("corrected heading" , getCorrectedHeading());
+
+            telemetry.addData("heading" , gyro.getHeading());
+
+
+            telemetry.addData("int z", gyro.getIntegratedZValue());
+
+
+            telemetry.update();
 
             idle();
         }
     }
 
     public void pivotToAngle(int angle, double speed) throws InterruptedException {
+        int heading = getCorrectedHeading();
+
+        double power;
+        double proportionalConst = 0.004;
+
+        double topCeiling = speed;
+        double bottomCeiling = -speed;
+        double topFloor = .05;
+        double bottomFloor = -.05;
+
+        int target = angle;
+
+        while (! (heading > target - 1 && heading < target + 1) ) {
+
+            long currentTime = System.currentTimeMillis();
+
+            power = Math.abs((target - heading) * proportionalConst);
+
+            if (power > topCeiling)
+                power = topCeiling;
+            else if (power < bottomCeiling)
+                power = bottomCeiling;
+            else if (power < topFloor && power > 0)
+                power = topFloor;
+            else if (power > bottomFloor && power < 0)
+                power = bottomFloor;
+
+            if (target > heading) {
+                driveTrain.setLeftDrivePower(power);
+                driveTrain.setRightDrivePower(-power);
+
+                telemetry.addData("turn", "turn left");
+            }
+            else {
+                driveTrain.setLeftDrivePower(-power);
+                driveTrain.setRightDrivePower(power);
+
+                telemetry.addData("turn", "turn right");
+            }
+
+            telemetry.update();
+
+            heading = getCorrectedHeading();
+
+
+            idle();
+
+        }
+
+        driveTrain.setLeftDrivePower(0);
+        driveTrain.setRightDrivePower(0);
+
+    }
+
+    /** TURN TO ANGLE AUTOMATICALLY FAST AS POSSIBLE IN BETA NOT WORKING*/
+    /* public void pivotToAngle(int angle, double speed) throws InterruptedException {
         int heading = getCorrectedHeading();
 
         long lastTime = System.currentTimeMillis();
@@ -158,13 +225,13 @@ public class TurnTester extends LinearOpMode {
             boolean tarGreater = target - heading > 0;
 
             if ((tarGreater && target - heading > 180) || (!tarGreater && target - heading < 180)) {
-                //driveTrain.setRightDrivePower(-power);
-                //driveTrain.setLeftDrivePower(power);
+                driveTrain.setRightDrivePower(-power);
+                driveTrain.setLeftDrivePower(power);
 
                 telemetry.addData("Turn", "Right");
             } else {
-                //driveTrain.setRightDrivePower(power);
-                //driveTrain.setLeftDrivePower(-power);
+                driveTrain.setRightDrivePower(power);
+                driveTrain.setLeftDrivePower(-power);
                 telemetry.addData("Turn", "Left");
             }
 
@@ -175,6 +242,10 @@ public class TurnTester extends LinearOpMode {
             telemetry.addData("angle: " , heading);
 
             telemetry.addData("loopTime",  currentTime - lastTime);
+
+            telemetry.addData("right power: ", driveTrain.getPower(1));
+
+            telemetry.addData("left power: ", driveTrain.getPower(0));
 
             telemetry.update();
 
@@ -187,17 +258,14 @@ public class TurnTester extends LinearOpMode {
 
         driveTrain.setRightDrivePower(0);
         driveTrain.setLeftDrivePower(0);
-    }
+    }*/
 
     //Returns corrected gyro angle
     private int getCorrectedHeading() {
         double elapsedSeconds = (System.nanoTime() - startTime) / 1000000000.0;
         int totalDrift = (int) (elapsedSeconds / 5 * drift);
-        int targetHeading = gyro.getHeading() - offset - totalDrift;
-        while (targetHeading > 359)               //
-            targetHeading = targetHeading - 360; // Allows value to "wrap around"
-        while (targetHeading < 0)                 // since values can only be 0-359
-            targetHeading = targetHeading + 360; //
+        int targetHeading = gyro.getIntegratedZValue() - offset - totalDrift;
+
         return targetHeading;
     }
 
