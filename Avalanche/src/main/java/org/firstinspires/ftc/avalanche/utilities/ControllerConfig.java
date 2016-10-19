@@ -13,8 +13,8 @@ import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 
 public interface ControllerConfig {
 
-    double LTrack();
-    double RTrack();
+    float LTrack();
+    float RTrack();
     boolean HarvesterButtonPressed();
     boolean ShooterButtonPressed();
     boolean LeftButtonPresserButtonPressed();
