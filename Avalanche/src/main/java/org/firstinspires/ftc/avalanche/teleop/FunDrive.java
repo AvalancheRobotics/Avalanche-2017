@@ -14,10 +14,13 @@ import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
+import static org.firstinspires.ftc.avalanche.R.raw.sanic;
+
 /* A port of the BasicDrive Class used for development and fun. */
 @TeleOp(name = "FunDrive", group = "TeleOp")
-public class FunDrive extends LinearOpMode implements ControllerConfig {
+public class FunDrive extends LinearOpMode{
 
+    private ControllerConfig controls;
     private DcMotor motorLeftFront;
     private DcMotor motorRightFront;
     private DcMotor motorLeftBack;
@@ -56,6 +59,12 @@ public class FunDrive extends LinearOpMode implements ControllerConfig {
 
         // Wait for the game to start
         waitForStart();
+        //playSanic();
+        while (!opModeIsActive())
+        {
+            playR2D2();
+        }
+        controls = new DefaultControls(gamepad1, gamepad2);
 
         //Test our media player
         //sanic.start();
@@ -63,19 +72,19 @@ public class FunDrive extends LinearOpMode implements ControllerConfig {
         // Go go gadget robot!
         while (opModeIsActive())
         {
-            boolean modifierKey = modifierKey();
+            boolean modifierKey = controls.modifierKey();
 
-            if (ScaleInput.scale(LTrack()) != 0
-                    || ScaleInput.scale(RTrack()) != 0)
-            driveTrain.manualDrive(-LTrack(), -RTrack());
+            if (ScaleInput.scale(controls.LTrack()) != 0
+                    || ScaleInput.scale(controls.RTrack()) != 0)
+            driveTrain.manualDrive(-controls.LTrack(), -controls.RTrack());
 
-            if (reverse())
+            if (controls.reverse())
             {
                     driveTrain.setLeftDrivePower(-driveSpeed);
                     driveTrain.setRightDrivePower(-driveSpeed);
             }
 
-            if (increaseSpeed())
+            if (controls.increaseSpeed())
             {
                 if (modifierKey)
                 {
@@ -109,7 +118,7 @@ public class FunDrive extends LinearOpMode implements ControllerConfig {
                 countBAlt = 0;
             }
 
-            if (decreaseSpeed())
+            if (controls.decreaseSpeed())
             {
                 if (modifierKey)
                 {
@@ -141,7 +150,7 @@ public class FunDrive extends LinearOpMode implements ControllerConfig {
                 countXAlt = 0;
             }
 
-            if (forward())
+            if (controls.forward())
             {
                 if (modifierKey)
                     playR2D2();
@@ -173,20 +182,20 @@ public class FunDrive extends LinearOpMode implements ControllerConfig {
             }
 
             //turn right
-            if (turnRight()) {
+            if (controls.turnRight()) {
                 driveTrain.setLeftDrivePower(-turnSpeed);
                 driveTrain.setRightDrivePower(turnSpeed);
             }
 
             //turn left
-            if (turnLeft()) {
+            if (controls.turnLeft()) {
                 driveTrain.setLeftDrivePower(turnSpeed);
                 driveTrain.setRightDrivePower(-turnSpeed);
             }
 
-            if (!turnLeft() && !turnRight() && !gamepad1.y && !reverse()
-                    && ScaleInput.scale(LTrack()) == 0
-                    && ScaleInput.scale(RTrack()) == 0) {
+            if (!controls.turnLeft() && !controls.turnRight() && !controls.forward() && !controls.reverse()
+                    && ScaleInput.scale(controls.LTrack()) == 0
+                    && ScaleInput.scale(controls.RTrack()) == 0) {
                 driveTrain.setLeftDrivePower(0);
                 driveTrain.setRightDrivePower(0);
             }
@@ -207,6 +216,11 @@ public class FunDrive extends LinearOpMode implements ControllerConfig {
         }
     }
 
+    private void playSanic()
+    {
+        MediaPlayer gottaGoFast = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.sanic);
+        gottaGoFast.start();
+    }
     private void playR2D2()
     {
         MediaPlayer r2d2 = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.r2d2a);
@@ -239,18 +253,6 @@ public class FunDrive extends LinearOpMode implements ControllerConfig {
     {
         return (double)Math.round(value * 10d) / 10d;
     }
-    public float LTrack() {return gamepad1.left_stick_y;}
-    public float RTrack() {return gamepad1.right_stick_y;}
-    public boolean LeftButtonPresserButtonPressed() {return gamepad2.dpad_left;}
-    public boolean RightButtonPresserButtonPressed() {return gamepad2.dpad_right;}
-    public boolean HarvesterButtonPressed() {return gamepad2.a;}
-    public boolean ShooterButtonPressed() {return gamepad2.y;}
-    public boolean turnLeft() {return gamepad1.left_bumper;}
-    public boolean turnRight() {return gamepad1.right_bumper;}
-    public boolean modifierKey() {return gamepad1.dpad_down;}
-    public boolean increaseSpeed() {return gamepad1.b;}
-    public boolean decreaseSpeed() {return gamepad1.x;}
-    public boolean reverse() {return gamepad1.a;}
-    public boolean forward() {return gamepad1.y;}
+
 }
 
