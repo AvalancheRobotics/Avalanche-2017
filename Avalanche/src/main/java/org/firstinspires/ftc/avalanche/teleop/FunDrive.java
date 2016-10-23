@@ -11,11 +11,12 @@ import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
+import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 /* A port of the BasicDrive Class used for development and fun. */
 @TeleOp(name = "FunDrive", group = "TeleOp")
-public class FunDrive extends LinearOpMode {
+public class FunDrive extends LinearOpMode implements ControllerConfig {
 
     private DcMotor motorLeftFront;
     private DcMotor motorRightFront;
@@ -62,19 +63,19 @@ public class FunDrive extends LinearOpMode {
         // Go go gadget robot!
         while (opModeIsActive())
         {
-            boolean modifierKey = gamepad1.dpad_down;
+            boolean modifierKey = modifierKey();
 
-            if (ScaleInput.scale(gamepad1.left_stick_y) != 0
-                    || ScaleInput.scale(gamepad1.right_stick_y) != 0)
-            driveTrain.manualDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+            if (ScaleInput.scale(LTrack()) != 0
+                    || ScaleInput.scale(RTrack()) != 0)
+            driveTrain.manualDrive(-LTrack(), -RTrack());
 
-            if (gamepad1.a)
+            if (reverse())
             {
                     driveTrain.setLeftDrivePower(-driveSpeed);
                     driveTrain.setRightDrivePower(-driveSpeed);
             }
 
-            if (gamepad1.b)
+            if (increaseSpeed())
             {
                 if (modifierKey)
                 {
@@ -108,7 +109,7 @@ public class FunDrive extends LinearOpMode {
                 countBAlt = 0;
             }
 
-            if (gamepad1.x)
+            if (decreaseSpeed())
             {
                 if (modifierKey)
                 {
@@ -140,7 +141,7 @@ public class FunDrive extends LinearOpMode {
                 countXAlt = 0;
             }
 
-            if (gamepad1.y)
+            if (forward())
             {
                 if (modifierKey)
                     playR2D2();
@@ -172,20 +173,20 @@ public class FunDrive extends LinearOpMode {
             }
 
             //turn right
-            if (gamepad1.right_bumper) {
+            if (turnRight()) {
                 driveTrain.setLeftDrivePower(-turnSpeed);
                 driveTrain.setRightDrivePower(turnSpeed);
             }
 
             //turn left
-            if (gamepad1.left_bumper) {
+            if (turnLeft()) {
                 driveTrain.setLeftDrivePower(turnSpeed);
                 driveTrain.setRightDrivePower(-turnSpeed);
             }
 
-            if (!gamepad1.left_bumper && !gamepad1.right_bumper && !gamepad1.y && !gamepad1.a
-                    && ScaleInput.scale(gamepad1.left_stick_y) == 0
-                    && ScaleInput.scale(gamepad1.right_stick_y) == 0) {
+            if (!turnLeft() && !turnRight() && !gamepad1.y && !reverse()
+                    && ScaleInput.scale(LTrack()) == 0
+                    && ScaleInput.scale(RTrack()) == 0) {
                 driveTrain.setLeftDrivePower(0);
                 driveTrain.setRightDrivePower(0);
             }
@@ -238,5 +239,18 @@ public class FunDrive extends LinearOpMode {
     {
         return (double)Math.round(value * 10d) / 10d;
     }
+    public float LTrack() {return gamepad1.left_stick_y;}
+    public float RTrack() {return gamepad1.right_stick_y;}
+    public boolean LeftButtonPresserButtonPressed() {return gamepad2.dpad_left;}
+    public boolean RightButtonPresserButtonPressed() {return gamepad2.dpad_right;}
+    public boolean HarvesterButtonPressed() {return gamepad2.a;}
+    public boolean ShooterButtonPressed() {return gamepad2.y;}
+    public boolean turnLeft() {return gamepad1.left_bumper;}
+    public boolean turnRight() {return gamepad1.right_bumper;}
+    public boolean modifierKey() {return gamepad1.dpad_down;}
+    public boolean increaseSpeed() {return gamepad1.b;}
+    public boolean decreaseSpeed() {return gamepad1.x;}
+    public boolean reverse() {return gamepad1.a;}
+    public boolean forward() {return gamepad1.y;}
 }
 

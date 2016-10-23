@@ -19,4 +19,11 @@ public interface ControllerConfig {
     boolean ShooterButtonPressed();
     boolean LeftButtonPresserButtonPressed();
     boolean RightButtonPresserButtonPressed();
+    boolean modifierKey();
+    boolean turnRight();
+    boolean turnLeft();
+    boolean increaseSpeed();
+    boolean decreaseSpeed();
+    boolean reverse();
+    boolean forward();
 }
