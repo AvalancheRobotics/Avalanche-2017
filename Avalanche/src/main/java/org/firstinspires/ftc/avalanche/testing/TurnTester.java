@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.avalanche.utilities;
+package org.firstinspires.ftc.avalanche.testing;
 
 
 import android.media.MediaPlayer;
@@ -15,6 +15,7 @@ import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
+import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 @TeleOp(name = "Turn Tester", group = "TeleOp")
 public class TurnTester extends LinearOpMode {
