@@ -16,7 +16,11 @@ import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 import static org.firstinspires.ftc.avalanche.R.raw.sanic;
 
-/* A port of the BasicDrive Class used for development and fun. */
+/**
+ * A port of the BasicDrive Class used for development and fun.
+ *
+ * @author Keith
+ */
 @TeleOp(name = "FunDrive", group = "TeleOp")
 public class FunDrive extends LinearOpMode{
 
@@ -59,15 +63,8 @@ public class FunDrive extends LinearOpMode{
 
         // Wait for the game to start
         waitForStart();
-        //playSanic();
-        while (!opModeIsActive())
-        {
-            playR2D2();
-        }
-        controls = new DefaultControls(gamepad1, gamepad2);
 
-        //Test our media player
-        //sanic.start();
+        controls = new DefaultControls(gamepad1, gamepad2);
 
         // Go go gadget robot!
         while (opModeIsActive())

@@ -10,7 +10,9 @@ import org.firstinspires.ftc.avalanche.utilities.ColorReader;
 import org.firstinspires.ftc.avalanche.utilities.Logger;
 
 /**
- * Created by Keith on 10/23/2016.
+ * A simple class used for testing and demonstration of Logger.
+ *
+ * @author Keith
  */
 @TeleOp(name = "Logger Tester", group = "Testing")
 public class LoggerTester extends LinearOpMode {
@@ -20,6 +22,7 @@ public class LoggerTester extends LinearOpMode {
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
         logger = new Logger("avalanche");
+        logger.setOpmode(this);
         logger.log("Hardware Mapping Finished");
     }
 

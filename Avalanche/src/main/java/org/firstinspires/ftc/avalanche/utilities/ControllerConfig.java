@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.avalanche.utilities;
 
 /**
+ * An interface that allows binding of different keys to different actions.
+ *
  * Created by Nicholas on 10/9/16.
  */
 import android.media.MediaPlayer;

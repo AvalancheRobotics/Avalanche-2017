@@ -8,6 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.avalanche.subsystems.AutoDriveTrainController;
 
+/**
+ * A simple autonomous class used for testing (and possibly production in the future).
+ *
+ * @author Keith
+ */
 
 @Autonomous(name="Auto", group="Autonomous")
 public class Auto extends LinearOpMode {
