@@ -7,8 +7,6 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.avalanche.R;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
@@ -35,14 +33,16 @@ public class StraightDriveTester extends LinearOpMode {
 
     MediaPlayer sanic;
 
+    static final int ODOMETER_INVERSED = -1;
+
     static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
     static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
     static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
 
-    static final double COUNTS_PER_ODOMETER_REV = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double COUNTS_PER_ODOMETER_REV = 1440;    // eg: TETRIX Motor Encoder
     static final double COUNTS_PER_MOTOR_REV = 1120;
-    static final double DRIVE_GEAR_REDUCTION = 1.0 ;     // This is < 1.0 if geared UP
-    static final double ODOMETER_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
+    static final double ODOMETER_DIAMETER_INCHES = 2.0;     // For figuring circumference
     static final double WHEEL_DIAMETER = 4.0;
     static final double COUNTS_PER_INCH_ODOMETER = (COUNTS_PER_ODOMETER_REV) /
             (ODOMETER_DIAMETER_INCHES * Math.PI);
@@ -111,6 +111,14 @@ public class StraightDriveTester extends LinearOpMode {
                 gyroDrive(.6, -10, 0);
             }
 
+            if (gamepad1.x) {
+                gyroDrive(.2, -10, 0);
+            }
+
+            if (gamepad1.b) {
+                gyroDrive(.1, -10, 0);
+            }
+
             if (gamepad1.y) {
                 gyroDrive(.6, 10, 0);
             }
@@ -129,132 +137,84 @@ public class StraightDriveTester extends LinearOpMode {
         return targetHeading;
     }
 
-    public void gyroDrive (double speed, double distance, double angle) throws InterruptedException
-    {
-        int newLeftBackTarget;
-        int newRightBackTarget;
-        int newLeftFrontTarget;
-        int newRightFrontTarget;
-        int totalOdometerTicks;
-        int totalDriveWheelTicks;
-        int odometerStartValue;
-        double  max;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
+    public void gyroDrive(double speed, double distance, double angle) throws InterruptedException {
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
-            driveTrain.resetEncoders();
+            int heading = getCorrectedHeading();
 
-            odometerStartValue = odometer.getCurrentPosition();
+            int distanceInOdometerTicks = (int) (distance * COUNTS_PER_INCH_ODOMETER);
 
-            totalOdometerTicks = (int) (distance * COUNTS_PER_INCH_ODOMETER);
+            int odometerTarget = -(odometer.getCurrentPosition() - distanceInOdometerTicks * ODOMETER_INVERSED);
 
-            totalDriveWheelTicks = (int) (distance * COUNTS_PER_INCH_DRIVE_WHEEL);
+            int odometerCurrentPosition = odometer.getCurrentPosition();
 
-            int ticksTraveledOdometer = odometer.getCurrentPosition() - odometerStartValue;
+            odometer.setTargetPosition(odometerTarget);
 
-            // Determine new target position, and pass to motor controller
-            newLeftBackTarget = driveTrain.getEncoderValue(0) + totalDriveWheelTicks;
-            newRightBackTarget = driveTrain.getEncoderValue(1) + totalDriveWheelTicks;
-            newLeftFrontTarget = driveTrain.getEncoderValue(2) + totalDriveWheelTicks;
-            newRightFrontTarget = driveTrain.getEncoderValue(3) + totalDriveWheelTicks;
-
-            // Set Target and Turn On RUN_TO_POSITION
-            driveTrain.setTargetPosition(0, newLeftBackTarget);
-            driveTrain.setTargetPosition(1, newRightBackTarget);
-            driveTrain.setTargetPosition(2, newLeftFrontTarget);
-            driveTrain.setTargetPosition(3, newRightFrontTarget);
+            driveTrain.setLeftDrivePower(getPower(distance, .1, .08, speed));
+            driveTrain.setRightDrivePower(getPower(distance, .1, .08, speed));
 
             driveTrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            // start motion.
-            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            driveTrain.setPower(speed);
+            while (!(odometerTarget + 10 > odometerCurrentPosition && odometerTarget - 10 < odometerCurrentPosition)) {
+                int distanceLeft = odometerTarget - odometerCurrentPosition;
+                odometerCurrentPosition = odometer.getCurrentPosition();
 
-            // keep looping while we are still active, and odometer has not yet reached its target position.
-            // The +- 5 is for allowing a bit of error since we're not going to be able to hit exactly on the odometer ticks
-            while (opModeIsActive() && !(ticksTraveledOdometer > totalOdometerTicks - 5 && ticksTraveledOdometer < totalOdometerTicks + 5)){
+                int odometerTicksToWheelTicks;
+                odometerTicksToWheelTicks = (int) (distanceLeft / COUNTS_PER_INCH_ODOMETER * COUNTS_PER_INCH_DRIVE_WHEEL);
 
-                ticksTraveledOdometer = odometer.getCurrentPosition() - odometerStartValue;
 
-                //Convert odometer ticks to wheel ticks
-                int wheelTicksRemaining = (int) (((totalOdometerTicks - Math.abs(ticksTraveledOdometer)) / COUNTS_PER_INCH_ODOMETER) * COUNTS_PER_INCH_DRIVE_WHEEL);
+                double steer = 0;//(heading - getCorrectedHeading()) * P_TURN_COEFF;
 
-                // Set Target and Turn On RUN_TO_POSITION
+                driveTrain.setLeftDrivePower(-getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER + steer, .1, .08, speed));
+                driveTrain.setRightDrivePower(-getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER - steer, .1, .08, speed));
 
-                if (totalOdometerTicks - ticksTraveledOdometer > 0) {
-                    driveTrain.setTargetPosition(0, wheelTicksRemaining + driveTrain.getEncoderValue(0));
-                    driveTrain.setTargetPosition(1, wheelTicksRemaining + driveTrain.getEncoderValue(1));
-                    driveTrain.setTargetPosition(2, wheelTicksRemaining + driveTrain.getEncoderValue(2));
-                    driveTrain.setTargetPosition(3, wheelTicksRemaining + driveTrain.getEncoderValue(3));
-                }
-                else {
-                    driveTrain.setTargetPosition(0, -wheelTicksRemaining + driveTrain.getEncoderValue(0));
-                    driveTrain.setTargetPosition(1, -wheelTicksRemaining + driveTrain.getEncoderValue(1));
-                    driveTrain.setTargetPosition(2, -wheelTicksRemaining + driveTrain.getEncoderValue(2));
-                    driveTrain.setTargetPosition(3, -wheelTicksRemaining + driveTrain.getEncoderValue(3));
-                }
+                driveTrain.setTargetPosition(0, odometerTicksToWheelTicks + driveTrain.getEncoderValue(0));
+                driveTrain.setTargetPosition(1, odometerTicksToWheelTicks + driveTrain.getEncoderValue(1));
+                driveTrain.setTargetPosition(2, odometerTicksToWheelTicks + driveTrain.getEncoderValue(2));
+                driveTrain.setTargetPosition(3, odometerTicksToWheelTicks + driveTrain.getEncoderValue(3));
 
-                // adjust relative speed based on heading error.
-                //error = getError(angle);
-                steer = getSteer(1, P_DRIVE_COEFF); //error, P_DRIVE_COEFF);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
-
-                leftSpeed = speed - steer;
-                rightSpeed = speed + steer;
-
-                // Normalize speeds if any one exceeds +/- 1.0;
-                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-
-                driveTrain.setLeftDrivePower(leftSpeed);
-                driveTrain.setRightDrivePower(rightSpeed);
-
-                telemetry.addData("leftSpeed", leftSpeed);
-                telemetry.addData("rightSpeed", rightSpeed);
-                telemetry.addData("leftSpeed", leftSpeed);
-                telemetry.addData("tickstraveled", ticksTraveledOdometer);
-                telemetry.addData("totalodomticks", totalOdometerTicks);
-                telemetry.addData("wheelticksremaining", wheelTicksRemaining);
+                telemetry.addData("leftSpeed" , driveTrain.getPower(0));
+                telemetry.addData("rightSpeed" , driveTrain.getPower(1));
+                telemetry.addData("o2wticks" , odometerTicksToWheelTicks);
+                telemetry.addData("otleft" , distanceLeft);
+                telemetry.addData("odomTarget" , odometerTarget);
+                telemetry.addData("odomCurrent" , odometerCurrentPosition);
 
 
                 telemetry.update();
 
 
-
-                // Allow time for other processes to run.
                 idle();
             }
 
-            // Stop all motion;
-            driveTrain.setPower(0);
         }
+
+        // Stop all motion;
+        driveTrain.setPower(0);
     }
 
-    public double getError(double targetAngle) {
+    private double getPower(double inchesFromTarget, double porpConstant, double floor, double ceiling) {
+        double power;
 
-        double robotError;
+        power = inchesFromTarget * porpConstant;
 
-        // calculate error in -179 to +180 range
-        robotError = targetAngle - getCorrectedHeading();
-        while (robotError > 180)  robotError -= 360;
-        while (robotError <= -180) robotError += 360;
-        return robotError;
+        int negative = 1;
+
+        if (power < 0) {
+            negative = -1;
+        }
+
+        power = Math.abs(power);
+
+        power = Math.max(power, floor);
+
+        power = Math.min(power, ceiling);
+
+        return power * negative;
     }
 
-    public double getSteer(double error, double PCoeff) {
-        return Range.clip(error * PCoeff, -1, 1);
-    }
 
 }
 
