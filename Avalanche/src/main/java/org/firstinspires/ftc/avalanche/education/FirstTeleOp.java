@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
+/**
+ * A bare bones teleop class used for teaching new members.
+ */
 @TeleOp(name = "First Teleop", group = "Education")
 public class FirstTeleOp extends LinearOpMode {
 

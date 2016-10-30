@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.avalanche.utilities;
 
 /**
+ * An interface that allows binding of different keys to different actions.
+ *
  * Created by Nicholas on 10/9/16.
  */
 import android.media.MediaPlayer;
@@ -19,4 +21,11 @@ public interface ControllerConfig {
     boolean ShooterButtonPressed();
     boolean LeftButtonPresserButtonPressed();
     boolean RightButtonPresserButtonPressed();
+    boolean modifierKey();
+    boolean turnRight();
+    boolean turnLeft();
+    boolean increaseSpeed();
+    boolean decreaseSpeed();
+    boolean reverse();
+    boolean forward();
 }

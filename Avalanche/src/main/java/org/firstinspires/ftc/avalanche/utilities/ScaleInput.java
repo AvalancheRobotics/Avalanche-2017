@@ -1,9 +1,17 @@
 package org.firstinspires.ftc.avalanche.utilities;
 
 /**
+ * Scales the inputs provided by the joysticks and triggers on the controllers.
+ *
  * Created by Austin on 6/3/2016.
  */
 public class ScaleInput {
+
+    /**
+     * Scales a float.
+     * @param dVal The value to be scaled.
+     * @return The scaled value.
+     */
     public static double scale(float dVal) {
             if (dVal < .1 && dVal > -.1) {
                 return 0;
@@ -24,6 +32,11 @@ public class ScaleInput {
 
     }
 
+    /**
+     * Scales a double.
+     * @param dVal The value to be scaled.
+     * @return The scaled value.
+     */
     public static double scale(double dVal) {
         if (dVal < .1 && dVal > -.1) {
             return 0;

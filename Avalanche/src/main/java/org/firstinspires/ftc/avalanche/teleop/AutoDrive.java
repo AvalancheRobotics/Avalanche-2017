@@ -14,11 +14,13 @@ import org.firstinspires.ftc.avalanche.enums.TeamColor;
 import org.firstinspires.ftc.avalanche.subsystems.AutoDriveTrainController;
 import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
+import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 @TeleOp(name = "AutoDrive", group = "TeleOp")
-public class AutoDrive extends LinearOpMode {
+public class AutoDrive extends LinearOpMode{
 
+    private ControllerConfig controls;
     private AutoDriveTrainController autoDriveTrain;
     ColorSensor colorSensor;
     ModernRoboticsI2cGyro gyro;
@@ -62,6 +64,7 @@ public class AutoDrive extends LinearOpMode {
         hardwareMapping();
 
         waitForStart();
+        controls = new DefaultControls(gamepad1, gamepad2);
 
         autoDriveTrain.callAtBeginningOfOpModeAfterInit();
 

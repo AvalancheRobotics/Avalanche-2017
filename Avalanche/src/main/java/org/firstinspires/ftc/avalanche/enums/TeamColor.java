@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.avalanche.enums;
 
 /**
- * Created by austinzhang on 9/17/16.
+ * @author Austin
  */
 public enum TeamColor {
     RED, BLUE
