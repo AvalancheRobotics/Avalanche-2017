@@ -77,14 +77,12 @@ public class StraightDriveTester extends LinearOpMode {
 
 
         /////////////////////////////////////////
-        gyro.calibrate();                //
-        //
+        gyro.calibrate();
         while (gyro.isCalibrating()) {    // Calibrating Gyro
             Thread.sleep(50);
         }
-        //
-        Thread.sleep(5000);                    //
-        drift = gyro.getHeading(); //
+        Thread.sleep(5000);
+        drift = gyro.getHeading();
         /////////////////////////////////////////
 
         telemetry.addData("Done Mapping", "finished.");

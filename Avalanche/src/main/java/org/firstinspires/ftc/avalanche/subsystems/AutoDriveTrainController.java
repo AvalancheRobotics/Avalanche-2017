@@ -122,9 +122,6 @@ public class AutoDriveTrainController {
         gyro.resetZAxisIntegrator();
 
         initLight = this.colorSensor.red() + this.colorSensor.green() + this.colorSensor.blue();
-
-        MediaPlayer initDone = MediaPlayer.create(this.linearOpMode.hardwareMap.appContext, R.raw.imready);
-        initDone.start();
     }
 
     public void callAtBeginningOfOpModeAfterInit() {
@@ -136,9 +133,13 @@ public class AutoDriveTrainController {
     //Uses gyroscope to maintain the same direction so robot doesn't drift off course
 
     /**
-     * @param speed                     Max speed you want your robot to travel (from 1 to -1)
-     * @param timeoutMillis             Max time in milliseconds you want your robot to drive before giving up and stopping
-     * @throws InterruptedException
+     * Drive to the white line, used primary for button pressing.
+     *
+     * @param speed                 Max speed you want your robot to travel (from -1 to 1).
+     * @param timeoutMillis         Max time in milliseconds you want your robot to drive before
+     *                              giving up and stopping.
+     * @throws InterruptedException If interrupted   during idle.
+     * @return boolean              Whether or not the robot reached the line before timeout.
      */
     public boolean driveToLine(double speed, double timeoutMillis) throws InterruptedException
     {
@@ -158,7 +159,11 @@ public class AutoDriveTrainController {
 
         long startTime = System.currentTimeMillis();
 
-        while (linearOpMode.opModeIsActive() && !ColorReader.isWhite(initLight, colorSensor.red() + colorSensor.green() + colorSensor.blue()) && System.currentTimeMillis() - startTime < timeoutMillis)
+        boolean timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
+
+        while (linearOpMode.opModeIsActive() && !ColorReader.isWhite(initLight,
+                colorSensor.red() + colorSensor.green() + colorSensor.blue())
+                && !timeout)
         {
             // adjust relative speed based on heading error.
             error = getError(angle);
@@ -181,13 +186,9 @@ public class AutoDriveTrainController {
 
             // Allow time for other processes to run.
             linearOpMode.idle();
-        }
 
-        boolean onWhite = true;
-
-        // If true this means that we timed out before we detected the white tape, therefore we're not on white.
-        if (System.currentTimeMillis() - startTime > timeoutMillis) {
-            onWhite = false;
+            // If true this means that we timed out before we detected the white tape, therefore we're not on white.
+            timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
         }
 
         // keep looping while we are still active, we haven't taken too long (reached timeout)
@@ -196,7 +197,7 @@ public class AutoDriveTrainController {
         driveTrain.setLeftDrivePower(0);
         driveTrain.setRightDrivePower(0);
 
-        return onWhite;
+        return !timeout;
     }
 
     /**
@@ -205,8 +206,10 @@ public class AutoDriveTrainController {
      *  1) Move gets to the desired position
      *  2) Driver stops the opmode running.
      *
-     * @param speed      Target speed for forward motion.  Should allow for _/- variance for adjusting heading
-     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backwards.
+     * @param speed      Target speed for forward motion.  Should allow for _/- variance for
+     *                   adjusting heading
+     * @param distance   Distance (in inches) to move from current position.  Negative distance
+     *                   means move backwards.
      * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from current heading.
