@@ -66,7 +66,7 @@ public class AutoDriveToLineTest extends LinearOpMode
         autoDriveTrain = new AutoDriveTrainController(colorSensor, this, gyro, hardwareMap, odometer);
 
         distance = 0;
-        speed = 1;
+        speed = 0.1;
 
         countSpeedUp = 0;
         countSpeedDown = 0;
@@ -148,7 +148,7 @@ public class AutoDriveToLineTest extends LinearOpMode
             }
 
             if (gamepad1.start) {
-                lastDrive = autoDriveTrain.driveToLine(speed, 100000);
+                lastDrive = autoDriveTrain.driveToLine(speed, 10000);
             }
 
             if (gamepad1.right_bumper || gamepad1.left_bumper)

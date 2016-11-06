@@ -138,7 +138,7 @@ public class AutoDriveTrainController {
      * @param speed                 Max speed you want your robot to travel (from -1 to 1).
      * @param timeoutMillis         Max time in milliseconds you want your robot to drive before
      *                              giving up and stopping.
-     * @throws InterruptedException If interrupted   during idle.
+     * @throws InterruptedException If interrupted during idle.
      * @return boolean              Whether or not the robot reached the line before timeout.
      */
     public boolean driveToLine(double speed, double timeoutMillis) throws InterruptedException
@@ -160,12 +160,6 @@ public class AutoDriveTrainController {
         long startTime = System.currentTimeMillis();
 
         boolean timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
-
-        linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
-                colorSensor.red() + colorSensor.green() + colorSensor.blue()));
-        linearOpMode.telemetry.addData("Red", colorSensor.red());
-        linearOpMode.telemetry.addData("Green", colorSensor.green());
-        linearOpMode.telemetry.addData("Blue", colorSensor.blue());
 
         while (linearOpMode.opModeIsActive() && !ColorReader.isWhite(initLight,
                 colorSensor.red() + colorSensor.green() + colorSensor.blue())
@@ -189,26 +183,12 @@ public class AutoDriveTrainController {
             driveTrain.setLeftDrivePower(leftSpeed);
             driveTrain.setRightDrivePower(rightSpeed);*/
 
-            linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
-                    colorSensor.red() + colorSensor.green() + colorSensor.blue()));
-            linearOpMode.telemetry.addData("Red", colorSensor.red());
-            linearOpMode.telemetry.addData("Green", colorSensor.green());
-            linearOpMode.telemetry.addData("Blue", colorSensor.blue());
-            linearOpMode.telemetry.update();
-
             // If true this means that we timed out before we detected the white tape, therefore we're not on white.
             timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
 
             // Allow time for other processes to run.
             linearOpMode.idle();
         }
-
-        linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
-                colorSensor.red() + colorSensor.green() + colorSensor.blue()));
-        linearOpMode.telemetry.addData("Red", colorSensor.red());
-        linearOpMode.telemetry.addData("Green", colorSensor.green());
-        linearOpMode.telemetry.addData("Blue", colorSensor.blue());
-        linearOpMode.telemetry.update();
 
         // keep looping while we are still active, we haven't taken too long (reached timeout)
         // and we haven't reached the white line yet.
@@ -242,14 +222,6 @@ public class AutoDriveTrainController {
         driveTrain.setLeftDrivePower(speed);
         driveTrain.setRightDrivePower(speed);
 
-        long startTime = System.currentTimeMillis();
-
-        linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
-                colorSensor.red() + colorSensor.green() + colorSensor.blue()));
-        linearOpMode.telemetry.addData("Red", colorSensor.red());
-        linearOpMode.telemetry.addData("Green", colorSensor.green());
-        linearOpMode.telemetry.addData("Blue", colorSensor.blue());
-
         while (linearOpMode.opModeIsActive() && !ColorReader.isWhite(initLight,
                 colorSensor.red() + colorSensor.green() + colorSensor.blue()))
         {
@@ -271,24 +243,10 @@ public class AutoDriveTrainController {
             driveTrain.setLeftDrivePower(leftSpeed);
             driveTrain.setRightDrivePower(rightSpeed);*/
 
-            linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
-                    colorSensor.red() + colorSensor.green() + colorSensor.blue()));
-            linearOpMode.telemetry.addData("Red", colorSensor.red());
-            linearOpMode.telemetry.addData("Green", colorSensor.green());
-            linearOpMode.telemetry.addData("Blue", colorSensor.blue());
-            linearOpMode.telemetry.update();
-
             // If true this means that we timed out before we detected the white tape, therefore we're not on white.
             // Allow time for other processes to run.
             linearOpMode.idle();
         }
-
-        linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
-                colorSensor.red() + colorSensor.green() + colorSensor.blue()));
-        linearOpMode.telemetry.addData("Red", colorSensor.red());
-        linearOpMode.telemetry.addData("Green", colorSensor.green());
-        linearOpMode.telemetry.addData("Blue", colorSensor.blue());
-        linearOpMode.telemetry.update();
 
         // keep looping while we are still active, we haven't taken too long (reached timeout)
         // and we haven't reached the white line yet.
