@@ -148,7 +148,7 @@ public class AutoDriveToLineTest extends LinearOpMode
             }
 
             if (gamepad1.start) {
-                lastDrive = autoDriveTrain.driveToLine(speed, 10000);
+                lastDrive = autoDriveTrain.driveToLine(speed, 100000);
             }
 
             if (gamepad1.right_bumper || gamepad1.left_bumper)
