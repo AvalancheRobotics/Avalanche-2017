@@ -10,7 +10,7 @@ import java.io.PrintStream;
 
 /**
  * Allows logging to a specified file that can easily be accessed in the phones storage directory.
- * Files are saved as <pre>.txt</pre> unless otherwise specified.
+ * Files are saved as <pre>.log</pre> unless otherwise specified.
  *
  * @author Keith
  */
@@ -26,7 +26,7 @@ public class Logger {
      */
     public Logger(String fileName)
     {
-        log = new File("sdcard/" + fileName + ".txt");
+        log = new File("sdcard/" + fileName + ".log");
         if (!log.exists())
         {
             try
@@ -46,14 +46,13 @@ public class Logger {
     }
 
     /**
-     * Creates a Logger with a specified fileName and file extension (via a variable).
+     * Created a Logger with a specified file name and extension.
      * @param fileName  The name of the file to save to, without the extension.
-     * @param logExt  If true, sets the file extention as a <pre>.log</pre> file, otherwise uses
-     *                a <pre>.txt</pre> file
+     * @param ext  The extension used to save the file to.
      */
-    public Logger(String fileName, boolean logExt)
+    public Logger(String fileName, String ext)
     {
-        log = new File(logExt ? "sdcard/" + fileName + ".log" : "sdcard/" + fileName + ".txt");
+        log = new File("sdcard/" + fileName + "." + ext);
         if (!log.exists())
         {
             try

@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
-@TeleOp(name = "First Teleop", group = "Education")
+@TeleOp(name = "David First Teleop", group = "Education")
 public class DavidFirstTeleOp extends LinearOpMode {
 
     private DcMotor motorLeftFront;
