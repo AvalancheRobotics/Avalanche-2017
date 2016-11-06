@@ -18,9 +18,9 @@ public interface ControllerConfig {
     float LTrack();
     float RTrack();
     boolean HarvesterButtonPressed();
-    boolean ShooterButtonPressed();
-    boolean LeftButtonPresserButtonPressed();
-    boolean RightButtonPresserButtonPressed();
+    boolean LoadAndShootButtonPressed();
+    boolean AutoLeftButtonPresserButtonPressed();
+    boolean AutoRightButtonPresserButtonPressed();
     boolean modifierKey();
     boolean turnRight();
     boolean turnLeft();
@@ -28,4 +28,13 @@ public interface ControllerConfig {
     boolean decreaseSpeed();
     boolean reverse();
     boolean forward();
+    boolean ReverseHarvesterButtonPressed();
+    boolean LockPositionButtonPressed();
+    boolean ShooterActivationButtonPressed();
+    boolean ShootOneBall();
+    boolean ExtendButtonPresser();
+    boolean RetractButtonPresser();
+    boolean TiltButtonPresserLeftUp();
+    boolean TiltButtonPresserRightUp();
+    boolean HoldButtonPresserPosition();
 }

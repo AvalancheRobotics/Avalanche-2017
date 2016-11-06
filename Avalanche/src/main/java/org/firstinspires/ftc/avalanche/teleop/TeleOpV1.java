@@ -11,6 +11,7 @@ import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.subsystems.MotorController;
+import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 
 /**
  * Created by austinzhang on 11/3/16.
@@ -19,6 +20,8 @@ import org.firstinspires.ftc.avalanche.subsystems.MotorController;
 
 @TeleOp(name = "TeleOpV1", group = "TeleOp")
 public class TeleOpV1 extends LinearOpMode{
+
+    private ControllerConfig controls;
 
     DriveTrainController driveTrain;
 
@@ -70,6 +73,7 @@ public class TeleOpV1 extends LinearOpMode{
         // Wait for the game to start
         waitForStart();
 
+        controls = new DefaultControls(gamepad1, gamepad2);
 
         // Go go gadget robot!
         while (opModeIsActive()) {
