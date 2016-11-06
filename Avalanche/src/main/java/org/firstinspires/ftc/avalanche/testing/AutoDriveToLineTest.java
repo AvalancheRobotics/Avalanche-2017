@@ -18,7 +18,8 @@ import org.firstinspires.ftc.avalanche.teleop.DefaultControls;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 
 @TeleOp(name = "Auto DriveToLine Tester", group = "Testing")
-public class AutoDriveToLineTest extends LinearOpMode{
+public class AutoDriveToLineTest extends LinearOpMode
+{
 
     private ControllerConfig controls;
     private AutoDriveTrainController autoDriveTrain;
@@ -88,11 +89,11 @@ public class AutoDriveToLineTest extends LinearOpMode{
         while (opModeIsActive()) {
 
             if (gamepad1.y) {
-                autoDriveTrain.gyroDrive(.6 , distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.gyroDrive(.6, distance, autoDriveTrain.getCorrectedHeading());
             }
 
             if (gamepad1.a) {
-                autoDriveTrain.gyroDrive(.6 , -distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.gyroDrive(.6, -distance, autoDriveTrain.getCorrectedHeading());
             }
 
             if (gamepad1.b)
@@ -147,13 +148,25 @@ public class AutoDriveToLineTest extends LinearOpMode{
             }
 
             if (gamepad1.start) {
-                lastDrive = autoDriveTrain.driveToLine(speed, 1000000000*1000000000);
+                lastDrive = autoDriveTrain.driveToLine(speed, 100000);
+            }
+
+            if (gamepad1.right_bumper || gamepad1.left_bumper)
+            {
+                autoDriveTrain.goBackward();
+                telemetry.addData("Going", "Backward");
+            }
+            else
+            {
+                autoDriveTrain.stop();
             }
 
             telemetry.addData("Distance", roundToOneDec(distance) + " inches");
             telemetry.addData("Speed", speed);
 
             telemetry.addData("odom" , odometer.getCurrentPosition());
+
+            telemetry.addData("lastDrive", lastDrive);
 
             telemetry.update();
             idle();

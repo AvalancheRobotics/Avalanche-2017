@@ -161,6 +161,12 @@ public class AutoDriveTrainController {
 
         boolean timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
 
+        linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
+                colorSensor.red() + colorSensor.green() + colorSensor.blue()));
+        linearOpMode.telemetry.addData("Red", colorSensor.red());
+        linearOpMode.telemetry.addData("Green", colorSensor.green());
+        linearOpMode.telemetry.addData("Blue", colorSensor.blue());
+
         while (linearOpMode.opModeIsActive() && !ColorReader.isWhite(initLight,
                 colorSensor.red() + colorSensor.green() + colorSensor.blue())
                 && !timeout)
@@ -183,12 +189,26 @@ public class AutoDriveTrainController {
             driveTrain.setLeftDrivePower(leftSpeed);
             driveTrain.setRightDrivePower(rightSpeed);*/
 
-            // Allow time for other processes to run.
-            linearOpMode.idle();
+            linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
+                    colorSensor.red() + colorSensor.green() + colorSensor.blue()));
+            linearOpMode.telemetry.addData("Red", colorSensor.red());
+            linearOpMode.telemetry.addData("Green", colorSensor.green());
+            linearOpMode.telemetry.addData("Blue", colorSensor.blue());
+            linearOpMode.telemetry.update();
 
             // If true this means that we timed out before we detected the white tape, therefore we're not on white.
             timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
+
+            // Allow time for other processes to run.
+            linearOpMode.idle();
         }
+
+        linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
+                colorSensor.red() + colorSensor.green() + colorSensor.blue()));
+        linearOpMode.telemetry.addData("Red", colorSensor.red());
+        linearOpMode.telemetry.addData("Green", colorSensor.green());
+        linearOpMode.telemetry.addData("Blue", colorSensor.blue());
+        linearOpMode.telemetry.update();
 
         // keep looping while we are still active, we haven't taken too long (reached timeout)
         // and we haven't reached the white line yet.
@@ -197,6 +217,86 @@ public class AutoDriveTrainController {
         driveTrain.setRightDrivePower(0);
 
         return !timeout;
+    }
+
+    /**
+     * Drive to the white line, used primary for button pressing.
+     *
+     * @param speed                 Max speed you want your robot to travel (from -1 to 1).
+     * @throws InterruptedException If interrupted   during idle.
+     * @return boolean              Whether or not the robot reached the line before timeout.
+     */
+    public boolean driveToLine(double speed) throws InterruptedException
+    {
+        double  max;
+        double  error;
+        double  steer;
+        double  leftSpeed;
+        double  rightSpeed;
+        double  angle;
+
+        driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        angle = getCorrectedHeading();
+
+        driveTrain.setLeftDrivePower(speed);
+        driveTrain.setRightDrivePower(speed);
+
+        long startTime = System.currentTimeMillis();
+
+        linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
+                colorSensor.red() + colorSensor.green() + colorSensor.blue()));
+        linearOpMode.telemetry.addData("Red", colorSensor.red());
+        linearOpMode.telemetry.addData("Green", colorSensor.green());
+        linearOpMode.telemetry.addData("Blue", colorSensor.blue());
+
+        while (linearOpMode.opModeIsActive() && !ColorReader.isWhite(initLight,
+                colorSensor.red() + colorSensor.green() + colorSensor.blue()))
+        {
+            // adjust relative speed based on heading error.
+            /*error = getError(angle);
+            steer = getSteer(error, P_DRIVE_COEFF);
+
+            leftSpeed = speed - steer;
+            rightSpeed = speed + steer;
+
+            // Normalize speeds if any one exceeds +/- 1.0;
+            max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+            if (max > 1.0)
+            {
+                leftSpeed /= max;
+                rightSpeed /= max;
+            }
+
+            driveTrain.setLeftDrivePower(leftSpeed);
+            driveTrain.setRightDrivePower(rightSpeed);*/
+
+            linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
+                    colorSensor.red() + colorSensor.green() + colorSensor.blue()));
+            linearOpMode.telemetry.addData("Red", colorSensor.red());
+            linearOpMode.telemetry.addData("Green", colorSensor.green());
+            linearOpMode.telemetry.addData("Blue", colorSensor.blue());
+            linearOpMode.telemetry.update();
+
+            // If true this means that we timed out before we detected the white tape, therefore we're not on white.
+            // Allow time for other processes to run.
+            linearOpMode.idle();
+        }
+
+        linearOpMode.telemetry.addData("Is White:", ColorReader.isWhite(initLight,
+                colorSensor.red() + colorSensor.green() + colorSensor.blue()));
+        linearOpMode.telemetry.addData("Red", colorSensor.red());
+        linearOpMode.telemetry.addData("Green", colorSensor.green());
+        linearOpMode.telemetry.addData("Blue", colorSensor.blue());
+        linearOpMode.telemetry.update();
+
+        // keep looping while we are still active, we haven't taken too long (reached timeout)
+        // and we haven't reached the white line yet.
+
+        driveTrain.setLeftDrivePower(0);
+        driveTrain.setRightDrivePower(0);
+
+        return true;
     }
 
     /**
@@ -583,6 +683,18 @@ public class AutoDriveTrainController {
         int targetHeading = gyro.getIntegratedZValue() - offset - totalDrift;
 
         return targetHeading;
+    }
+
+    public void goBackward()
+    {
+        driveTrain.setLeftDrivePower(-1);
+        driveTrain.setRightDrivePower(-1);
+    }
+
+    public void stop()
+    {
+        driveTrain.setLeftDrivePower(0);
+        driveTrain.setRightDrivePower(0);
     }
 
 }
