@@ -18,7 +18,8 @@ import org.firstinspires.ftc.avalanche.teleop.DefaultControls;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 
 @TeleOp(name = "Auto DriveToLine Tester", group = "Testing")
-public class AutoDriveToLineTest extends LinearOpMode{
+public class AutoDriveToLineTest extends LinearOpMode
+{
 
     private ControllerConfig controls;
     private AutoDriveTrainController autoDriveTrain;
@@ -44,7 +45,7 @@ public class AutoDriveToLineTest extends LinearOpMode{
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
 
-        beaconShuttle = hardwareMap.servo.get("beaconShuttle");
+        /*beaconShuttle = hardwareMap.servo.get("beaconShuttle");
         beaconTilt = hardwareMap.servo.get("beaconTilt");
         colorLeft = hardwareMap.colorSensor.get("colorLeft");
         colorRight = hardwareMap.colorSensor.get("colorRight");
@@ -53,31 +54,31 @@ public class AutoDriveToLineTest extends LinearOpMode{
         colorRight.setI2cAddress(new I2cAddr(0x04c/2));
 
         colorRight.enableLed(false);
-        colorLeft.enableLed(false);
+        colorLeft.enableLed(false);*/
 
         teamColor = TeamColor.BLUE;
 
         colorSensor = hardwareMap.colorSensor.get("ColorSensor");
         gyro = (ModernRoboticsI2cGyro)(hardwareMap.gyroSensor.get("Gyro"));
         odometer = hardwareMap.dcMotor.get("Odometer");
-        beaconPresser = new BeaconPresser(this, teamColor, beaconShuttle, beaconTilt, colorLeft, colorRight);
+        /*beaconPresser = new BeaconPresser(this, teamColor, beaconShuttle, beaconTilt, colorLeft, colorRight);*/
 
         autoDriveTrain = new AutoDriveTrainController(colorSensor, this, gyro, hardwareMap, odometer);
 
         distance = 0;
-        speed = 1;
+        speed = 0.1;
 
         countSpeedUp = 0;
         countSpeedDown = 0;
-
-        MediaPlayer initDone = MediaPlayer.create(hardwareMap.appContext, R.raw.imready);
-        initDone.start();
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         hardwareMapping();
+
+        MediaPlayer initDone = MediaPlayer.create(hardwareMap.appContext, R.raw.imready);
+        initDone.start();
 
         waitForStart();
         controls = new DefaultControls(gamepad1, gamepad2);
@@ -88,11 +89,11 @@ public class AutoDriveToLineTest extends LinearOpMode{
         while (opModeIsActive()) {
 
             if (gamepad1.y) {
-                autoDriveTrain.gyroDrive(.6 , distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.gyroDrive(.6, distance, autoDriveTrain.getCorrectedHeading());
             }
 
             if (gamepad1.a) {
-                autoDriveTrain.gyroDrive(.6 , -distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.gyroDrive(.6, -distance, autoDriveTrain.getCorrectedHeading());
             }
 
             if (gamepad1.b)
@@ -147,13 +148,25 @@ public class AutoDriveToLineTest extends LinearOpMode{
             }
 
             if (gamepad1.start) {
-                lastDrive = autoDriveTrain.driveToLine(speed, 1000000000*1000000000);
+                lastDrive = autoDriveTrain.driveToLine(speed, 100000);
+            }
+
+            if (gamepad1.right_bumper || gamepad1.left_bumper)
+            {
+                autoDriveTrain.goBackward();
+                telemetry.addData("Going", "Backward");
+            }
+            else
+            {
+                autoDriveTrain.stop();
             }
 
             telemetry.addData("Distance", roundToOneDec(distance) + " inches");
             telemetry.addData("Speed", speed);
 
             telemetry.addData("odom" , odometer.getCurrentPosition());
+
+            telemetry.addData("lastDrive", lastDrive);
 
             telemetry.update();
             idle();
