@@ -166,7 +166,7 @@ public class AutoDriveTrainController {
                 && !timeout)
         {
             // adjust relative speed based on heading error.
-            error = getError(angle);
+            /*error = getError(angle);
             steer = getSteer(error, P_DRIVE_COEFF);
 
             leftSpeed = speed - steer;
@@ -181,8 +181,7 @@ public class AutoDriveTrainController {
             }
 
             driveTrain.setLeftDrivePower(leftSpeed);
-            driveTrain.setRightDrivePower(rightSpeed);
-
+            driveTrain.setRightDrivePower(rightSpeed);*/
 
             // Allow time for other processes to run.
             linearOpMode.idle();

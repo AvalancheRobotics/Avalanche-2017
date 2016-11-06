@@ -44,7 +44,7 @@ public class AutoDriveToLineTest extends LinearOpMode{
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
 
-        beaconShuttle = hardwareMap.servo.get("beaconShuttle");
+        /*beaconShuttle = hardwareMap.servo.get("beaconShuttle");
         beaconTilt = hardwareMap.servo.get("beaconTilt");
         colorLeft = hardwareMap.colorSensor.get("colorLeft");
         colorRight = hardwareMap.colorSensor.get("colorRight");
@@ -53,14 +53,14 @@ public class AutoDriveToLineTest extends LinearOpMode{
         colorRight.setI2cAddress(new I2cAddr(0x04c/2));
 
         colorRight.enableLed(false);
-        colorLeft.enableLed(false);
+        colorLeft.enableLed(false);*/
 
         teamColor = TeamColor.BLUE;
 
         colorSensor = hardwareMap.colorSensor.get("ColorSensor");
         gyro = (ModernRoboticsI2cGyro)(hardwareMap.gyroSensor.get("Gyro"));
         odometer = hardwareMap.dcMotor.get("Odometer");
-        beaconPresser = new BeaconPresser(this, teamColor, beaconShuttle, beaconTilt, colorLeft, colorRight);
+        /*beaconPresser = new BeaconPresser(this, teamColor, beaconShuttle, beaconTilt, colorLeft, colorRight);*/
 
         autoDriveTrain = new AutoDriveTrainController(colorSensor, this, gyro, hardwareMap, odometer);
 
@@ -69,15 +69,15 @@ public class AutoDriveToLineTest extends LinearOpMode{
 
         countSpeedUp = 0;
         countSpeedDown = 0;
-
-        MediaPlayer initDone = MediaPlayer.create(hardwareMap.appContext, R.raw.imready);
-        initDone.start();
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         hardwareMapping();
+
+        MediaPlayer initDone = MediaPlayer.create(hardwareMap.appContext, R.raw.imready);
+        initDone.start();
 
         waitForStart();
         controls = new DefaultControls(gamepad1, gamepad2);
