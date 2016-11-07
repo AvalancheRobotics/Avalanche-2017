@@ -89,7 +89,7 @@ public class FullFunctionTeleOp extends LinearOpMode{
 
         servoLock.setPosition(RELEASE_LOCK);
 
-        playR2D2();
+        playSanic();
     }
 
     @Override
@@ -186,7 +186,7 @@ public class FullFunctionTeleOp extends LinearOpMode{
             if (controls.forward())
             {
                 if (modifierKey)
-                    playR2D2();
+                    playSanic();
                 else
                 {
                     driveTrain.setLeftDrivePower(driveSpeed);
@@ -279,33 +279,6 @@ public class FullFunctionTeleOp extends LinearOpMode{
     {
         MediaPlayer gottaGoFast = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.sanic);
         gottaGoFast.start();
-    }
-    private void playR2D2()
-    {
-        MediaPlayer r2d2 = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.r2d2a);
-
-        int rand = (int)(Math.random()*5);
-
-        switch (rand)
-        {
-            case 0:
-                r2d2 = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.r2d2a);
-                break;
-            case 1:
-                r2d2 = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.r2d2b);
-                break;
-            case 2:
-                r2d2 = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.r2d2c);
-                break;
-            case 3:
-                r2d2 = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.r2d2d);
-                break;
-            case 4:
-                r2d2 = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.r2d2e);
-                break;
-        }
-
-        r2d2.start();
     }
 
     public static double roundToOneDec(double value)
