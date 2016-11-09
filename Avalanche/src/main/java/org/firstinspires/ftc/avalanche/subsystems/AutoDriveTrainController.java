@@ -157,6 +157,14 @@ public class AutoDriveTrainController {
         driveTrain.setLeftDrivePower(speed);
         driveTrain.setRightDrivePower(speed);
 
+        //if on line, move off
+        while (ColorReader.isWhite(initLight,
+                colorSensor.red() + colorSensor.green() + colorSensor.blue()))
+        {
+            // Allow time for other processes to run.
+            linearOpMode.idle();
+        }
+
         long startTime = System.currentTimeMillis();
 
         boolean timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
@@ -618,7 +626,6 @@ public class AutoDriveTrainController {
             else {
                 driveTrain.setLeftDrivePower(-power);
                 driveTrain.setRightDrivePower(power);
-
             }
 
 
@@ -633,6 +640,67 @@ public class AutoDriveTrainController {
 
     }
 
+    public void turnUsingLeftDrive(int angle, double speed, double timeoutMillis) throws InterruptedException
+    {
+        int heading = getCorrectedHeading();
+
+        double power;
+        double proportionalConst = 0.004;
+
+        double topCeiling = speed;
+        double bottomCeiling = -speed;
+        double topFloor = .05;
+        double bottomFloor = -.05;
+
+        int target = angle;
+
+        long startTime = System.currentTimeMillis();
+
+        boolean timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
+
+        while (!(heading > target - 1 && heading < target + 1)  && !timeout)
+        {
+            power = Math.abs((target - heading) * proportionalConst);
+
+            if (power > topCeiling)
+                power = topCeiling;
+            else if (power < bottomCeiling)
+                power = bottomCeiling;
+            else if (power < topFloor && power > 0)
+                power = topFloor;
+            else if (power > bottomFloor && power < 0)
+                power = bottomFloor;
+
+            if (target > heading)
+            {
+                driveTrain.setLeftDrivePower(power);
+                linearOpMode.telemetry.addData("Direction", "Left");
+            }
+            else
+            {
+                driveTrain.setLeftDrivePower(-power);
+                linearOpMode.telemetry.addData("Direction", "Right");
+            }
+
+            linearOpMode.telemetry.addData("Old Heading", heading);
+
+            heading = getCorrectedHeading();
+
+            linearOpMode.telemetry.addData("New Heading", heading);
+            linearOpMode.telemetry.addData("Power", power);
+
+            linearOpMode.telemetry.addData("Time", System.currentTimeMillis() - startTime);
+
+            linearOpMode.telemetry.update();
+
+            timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
+
+            linearOpMode.idle();
+        }
+
+        driveTrain.setLeftDrivePower(0);
+    }
+
 
     //Returns corrected gyro angle
     public int getCorrectedHeading() {
@@ -643,6 +711,8 @@ public class AutoDriveTrainController {
         return targetHeading;
     }
 
+
+    //hacky methods for testing, not for use in production
     public void goBackward()
     {
         driveTrain.setLeftDrivePower(-1);

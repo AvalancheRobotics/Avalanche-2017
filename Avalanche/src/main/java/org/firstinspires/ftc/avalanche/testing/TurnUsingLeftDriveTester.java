@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.avalanche.R;
@@ -17,10 +16,9 @@ import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
 import org.firstinspires.ftc.avalanche.teleop.DefaultControls;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 
-@TeleOp(name = "Auto DriveToLine Tester", group = "Testing")
-public class AutoDriveToLineTest extends LinearOpMode
+@TeleOp(name = "TurnUsingLeftDrive", group = "Testing")
+public class TurnUsingLeftDriveTester extends LinearOpMode
 {
-
     private ControllerConfig controls;
     private AutoDriveTrainController autoDriveTrain;
     ColorSensor colorSensor;
@@ -66,7 +64,7 @@ public class AutoDriveToLineTest extends LinearOpMode
         autoDriveTrain = new AutoDriveTrainController(colorSensor, this, gyro, hardwareMap, odometer);
 
         distance = 0;
-        speed = 0.1;
+        speed = 0.4;
 
         countSpeedUp = 0;
         countSpeedDown = 0;
@@ -82,25 +80,33 @@ public class AutoDriveToLineTest extends LinearOpMode
 
         autoDriveTrain.callAtBeginningOfOpModeAfterInit();
 
+        telemetry.addData("Done", "");
+        telemetry.update();
+
         // Go go gadget robot!
         while (opModeIsActive()) {
 
-            if (gamepad1.y) {
+            telemetry.addData("Gamepad 1", gamepad1.toString());
+            telemetry.addData("Gamepad 2", gamepad2.toString());
+
+            if (gamepad1.y)
+            {
                 autoDriveTrain.gyroDrive(.6, distance, autoDriveTrain.getCorrectedHeading());
             }
 
-            if (gamepad1.a) {
+            if (gamepad1.a)
+            {
                 autoDriveTrain.gyroDrive(.6, -distance, autoDriveTrain.getCorrectedHeading());
             }
 
             if (gamepad1.b)
             {
-                autoDriveTrain.pivotToAngle(90, .4);
+                autoDriveTrain.turnUsingLeftDrive(90, speed, 100000);
             }
 
             if (gamepad1.x)
             {
-                autoDriveTrain.pivotToAngle(-90, .4);
+                autoDriveTrain.turnUsingLeftDrive(-90, speed, 100000);
             }
 
             if (gamepad1.dpad_right)
@@ -136,32 +142,12 @@ public class AutoDriveToLineTest extends LinearOpMode
                 countSpeedDown = 0;
             }
 
-            if (gamepad1.dpad_up) {
-                beaconPresser.setPresserToDrivePosition();
-            }
-
-            if (gamepad1.dpad_down) {
-                beaconPresser.startButtonPress(8000, 0);
-            }
-
-            if (gamepad1.start) {
+            if (gamepad1.start)
+            {
                 lastDrive = autoDriveTrain.driveToLine(speed, 100000);
             }
 
-            if (gamepad1.right_bumper || gamepad1.left_bumper)
-            {
-                autoDriveTrain.goBackward();
-                telemetry.addData("Going", "Backward");
-            }
-            else
-            {
-                autoDriveTrain.stop();
-            }
-
-            telemetry.addData("Distance", roundToOneDec(distance) + " inches");
             telemetry.addData("Speed", speed);
-
-            telemetry.addData("odom" , odometer.getCurrentPosition());
 
             telemetry.addData("lastDrive", lastDrive);
 
