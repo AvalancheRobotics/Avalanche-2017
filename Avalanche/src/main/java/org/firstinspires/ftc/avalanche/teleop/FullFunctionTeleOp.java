@@ -15,8 +15,6 @@ import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
-import static org.firstinspires.ftc.avalanche.R.raw.sanic;
-
 /**
  *
  *
@@ -88,8 +86,6 @@ public class FullFunctionTeleOp extends LinearOpMode{
         servoLock = hardwareMap.servo.get("Lock");
 
         servoLock.setPosition(RELEASE_LOCK);
-
-        playSanic();
     }
 
     @Override
@@ -185,13 +181,8 @@ public class FullFunctionTeleOp extends LinearOpMode{
 
             if (controls.forward())
             {
-                if (modifierKey)
-                    playSanic();
-                else
-                {
-                    driveTrain.setLeftDrivePower(driveSpeed);
-                    driveTrain.setRightDrivePower(driveSpeed);
-                }
+                driveTrain.setLeftDrivePower(driveSpeed);
+                driveTrain.setRightDrivePower(driveSpeed);
             }
 
             if (gamepad1.dpad_down)
@@ -273,12 +264,6 @@ public class FullFunctionTeleOp extends LinearOpMode{
             idle();
 
         }
-    }
-
-    private void playSanic()
-    {
-        MediaPlayer gottaGoFast = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.sanic);
-        gottaGoFast.start();
     }
 
     public static double roundToOneDec(double value)

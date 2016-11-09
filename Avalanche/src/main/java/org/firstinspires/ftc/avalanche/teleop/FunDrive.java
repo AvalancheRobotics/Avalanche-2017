@@ -14,8 +14,6 @@ import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
-import static org.firstinspires.ftc.avalanche.R.raw.sanic;
-
 /**
  * A port of the BasicDrive Class used for development and fun.
  *
@@ -213,11 +211,6 @@ public class FunDrive extends LinearOpMode{
         }
     }
 
-    private void playSanic()
-    {
-        MediaPlayer gottaGoFast = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.sanic);
-        gottaGoFast.start();
-    }
     private void playR2D2()
     {
         MediaPlayer r2d2 = MediaPlayer.create(hardwareMap.appContext, org.firstinspires.ftc.avalanche.R.raw.r2d2a);

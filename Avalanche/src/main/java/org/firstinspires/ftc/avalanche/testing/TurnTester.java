@@ -62,8 +62,6 @@ public class TurnTester extends LinearOpMode {
         telemetry.addData("Done Mapping", "finished.");
 
         telemetry.update();
-
-        sanic = MediaPlayer.create(hardwareMap.appContext, R.raw.sanic);
     }
 
     @Override
