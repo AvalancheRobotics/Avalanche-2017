@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 /**
  * A bare bones teleop class used for teaching new members.
  */
-@TeleOp(name = "Megan First Teleop", group = "Education")
-public class MeganFirstTeleOp extends LinearOpMode {
+@TeleOp(name = "Meghan First Teleop", group = "Education")
+public class MeghanFirstTeleOp extends LinearOpMode {
 
 
     @Override
