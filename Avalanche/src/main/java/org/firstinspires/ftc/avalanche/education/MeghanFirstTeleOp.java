@@ -18,6 +18,7 @@ public class MeghanFirstTeleOp extends LinearOpMode {
         // Go go gadget robot!
         while (opModeIsActive()) {
 
+            System.out.println("Delete this later.");
             idle();
 
         }
