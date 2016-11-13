@@ -61,14 +61,17 @@ public class TurnTester extends LinearOpMode implements SensorEventListener {
         // Reset encoders
         driveTrain.resetEncoders();
 
-        gyro.calibrate();
 
+        /////////////////////////////////////////
+        gyro.calibrate();                //
+        //
         while (gyro.isCalibrating()) {    // Calibrating Gyro
             Thread.sleep(50);
         }
-
-        Thread.sleep(5000);
-        drift = gyro.getHeading();
+        //
+        Thread.sleep(5000);                    //
+        drift = gyro.getHeading(); //
+        /////////////////////////////////////////
 
         telemetry.addData("Done Mapping", "finished.");
 
@@ -158,8 +161,6 @@ public class TurnTester extends LinearOpMode implements SensorEventListener {
 
         while (! (heading > target - 1 && heading < target + 1) ) {
 
-            telemetry.addData("Attempting To Move To", target);
-
             long currentTime = System.currentTimeMillis();
 
             power = Math.abs((target - heading) * proportionalConst);
@@ -189,6 +190,7 @@ public class TurnTester extends LinearOpMode implements SensorEventListener {
             telemetry.update();
 
             heading = getCorrectedHeading();
+
 
             idle();
 
