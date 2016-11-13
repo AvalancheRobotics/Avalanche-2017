@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by Austin on 9/13/2016.
  *
  */
-@TeleOp(name = "Odometer Tester", group = "Utilities")
+@TeleOp(name = "Odometer Tester", group = "Testing")
 public class OdometerTester extends LinearOpMode {
 
     DcMotor motor;

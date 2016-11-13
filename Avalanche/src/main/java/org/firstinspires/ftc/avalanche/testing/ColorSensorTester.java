@@ -11,7 +11,7 @@ import org.firstinspires.ftc.avalanche.utilities.ColorReader;
  * Created by Keith on 9/11/2016.
  * Change by Austin on 9/17/2016: Modified ColorSensorTester to work with and test new algorithms
  */
-@TeleOp(name = "Color Sensor Tester", group = "Utilities")
+@TeleOp(name = "Color Sensor Tester", group = "Testing")
 public class ColorSensorTester extends LinearOpMode {
 
     ColorSensor colorSensorBeacon;
