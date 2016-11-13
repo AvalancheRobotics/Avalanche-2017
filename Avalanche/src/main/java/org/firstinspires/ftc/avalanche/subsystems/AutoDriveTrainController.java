@@ -475,11 +475,7 @@ public class AutoDriveTrainController {
             onTarget = true;
         }
         else {
-            // TODO: BUG: This is the wrong value for 'steer'.
-            //            I expect this code to be replaced in a later commit.
-            //            If you need to use this for some reason, fix it first.
-            //            Look in previous versions under git to find the correct line.
-            steer = 0;
+            steer = getSteer(error, PCoeff);
             rightSpeed  = speed * steer;
             leftSpeed   = -rightSpeed;
         }
