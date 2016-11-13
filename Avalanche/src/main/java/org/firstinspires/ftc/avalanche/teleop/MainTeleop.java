@@ -1,28 +1,28 @@
 package org.firstinspires.ftc.avalanche.teleop;
 
-import android.media.MediaPlayer;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.avalanche.controls.DefaultControls;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
-import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
+import org.firstinspires.ftc.avalanche.controls.ControllerConfig;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 import org.firstinspires.ftc.avalanche.utilities.ValueStore;
 
 /**
- * A combination of FunDrive, TeleOpV1, and others made to have full function for the TeleOp portion of the competition.
+ * The main Teleop class used for production (competition) purposes.
  *
  * Created by Nicholas on 11/7/16
+ * Edited by Keith on 11/13/16
  */
-@TeleOp(name = "Full Function Teleop", group = "TeleOp")
-public class FullFunctionTeleOp extends LinearOpMode{
+@TeleOp(name = "Main Teleop", group = "TeleOp")
+public class MainTeleop extends LinearOpMode{
 
     private ControllerConfig controls;
     private DcMotor motorLeftFront;

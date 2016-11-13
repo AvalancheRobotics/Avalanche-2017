@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.avalanche.utilities;
+package org.firstinspires.ftc.avalanche.controls;
 
 /**
  * An interface that allows binding of different keys to different actions.

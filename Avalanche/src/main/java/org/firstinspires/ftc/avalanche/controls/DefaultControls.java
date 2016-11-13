@@ -1,8 +1,6 @@
-package org.firstinspires.ftc.avalanche.teleop;
+package org.firstinspires.ftc.avalanche.controls;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-
-import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 
 /**
  * Created by Nicholas on 10/23/16.
