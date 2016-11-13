@@ -21,7 +21,7 @@ import org.firstinspires.ftc.avalanche.utilities.ValueStore;
  *
  * Created by Nicholas on 11/7/16
  */
-@TeleOp(name = "FunDrive", group = "TeleOp")
+@TeleOp(name = "FullFunctionTeleop", group = "TeleOp")
 public class FullFunctionTeleOp extends LinearOpMode{
 
     private ControllerConfig controls;
