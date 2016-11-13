@@ -20,7 +20,7 @@ import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
  *
  * Created by Nicholas on 11/7/16
  */
-@TeleOp(name = "FullFunctionTeleop", group = "TeleOp")
+@TeleOp(name = "Full Function Teleop", group = "TeleOp")
 public class FullFunctionTeleOp extends LinearOpMode{
 
     private ControllerConfig controls;
