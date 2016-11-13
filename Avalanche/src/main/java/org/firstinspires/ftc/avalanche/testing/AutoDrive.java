@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.avalanche.teleop;
+package org.firstinspires.ftc.avalanche.testing;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,10 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.avalanche.controls.DefaultControls;
 import org.firstinspires.ftc.avalanche.enums.TeamColor;
 import org.firstinspires.ftc.avalanche.subsystems.AutoDriveTrainController;
 import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
-import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
+import org.firstinspires.ftc.avalanche.controls.ControllerConfig;
 
 @TeleOp(name = "AutoDrive", group = "TeleOp")
 public class AutoDrive extends LinearOpMode{

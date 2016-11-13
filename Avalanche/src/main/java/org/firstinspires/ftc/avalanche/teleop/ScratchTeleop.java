@@ -6,21 +6,22 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.avalanche.controls.DefaultControls;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
-import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
+import org.firstinspires.ftc.avalanche.controls.ControllerConfig;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 /**
- * A port of the BasicDrive Class used for development and fun.
+ * The scratch teleop used for development and testing.
  *
  * @author Keith
  */
-@TeleOp(name = "FunDrive", group = "TeleOp")
-public class FunDrive extends LinearOpMode{
+@TeleOp(name = "Scratch Teleop", group = "TeleOp")
+public class ScratchTeleop extends LinearOpMode{
 
     private ControllerConfig controls;
     private DcMotor motorLeftFront;

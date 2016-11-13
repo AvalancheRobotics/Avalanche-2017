@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.avalanche.enums.TeamColor;
 import org.firstinspires.ftc.avalanche.subsystems.AutoDriveTrainController;
 import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
-import org.firstinspires.ftc.avalanche.teleop.DefaultControls;
-import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
+import org.firstinspires.ftc.avalanche.controls.DefaultControls;
+import org.firstinspires.ftc.avalanche.controls.ControllerConfig;
 
 @TeleOp(name = "Auto DriveToLine Tester", group = "Testing")
 public class AutoDriveToLineTest extends LinearOpMode
