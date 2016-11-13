@@ -14,9 +14,10 @@ import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
+import org.firstinspires.ftc.avalanche.utilities.ValueStore;
 
 /**
- *
+ * A combination of FunDrive, TeleOpV1, and others made to have full function for the TeleOp portion of the competition.
  *
  * Created by Nicholas on 11/7/16
  */
@@ -243,10 +244,12 @@ public class FullFunctionTeleOp extends LinearOpMode{
             }
 
             if (controls.LoadAndShootButtonPressed()) {
-                servoLock.setPosition(LOAD_LOCK);
+                loadAndLaunch();
+            }
 
-                servoLock.setPosition(RELEASE_LOCK);
-
+            motorShooter.setPower(ScaleInput.scale(controls.ShootOneBall()));
+            if (controls.ShootOneBall() > 0.5)
+            {
                 launchOneBall();
             }
 
@@ -271,7 +274,25 @@ public class FullFunctionTeleOp extends LinearOpMode{
         return (double)Math.round(value * 10d) / 10d;
     }
 
-    private void launchOneBall(){}
+    private void loadAndLaunch() throws InterruptedException {
+        servoLock.setPosition(ValueStore.LOCK_LOAD);
+
+        Thread.sleep(1000);
+
+        servoLock.setPosition(ValueStore.LOCK_RELEASE);
+
+        launchOneBall();
+    }
+
+    private void launchOneBall() throws InterruptedException {
+        motorShooter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorShooter.setTargetPosition(motorShooter.getCurrentPosition() + ValueStore.ONE_SHOOTER_LOOP);
+        motorShooter.setPower(1);
+        while (motorShooter.isBusy()) {
+            idle();
+        }
+        motorShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
 }
 
