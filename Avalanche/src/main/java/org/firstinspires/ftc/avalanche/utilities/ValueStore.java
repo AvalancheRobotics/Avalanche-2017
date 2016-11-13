@@ -38,6 +38,12 @@ public class ValueStore {
     //Button presser's time to move from the measuring position to the pressing position
     public static final double TIME_TO_BUTTON_PRESS_FROM_MEASURE_DISTANCE_MILLIS = 2000; //ARBITRARY
 
+    public static final double LOCK_LOAD = ARBITRARYDOUBLE;
+
+    public static final double LOCK_RELEASE = ARBITRARYDOUBLE;
+
+    public static final int ONE_SHOOTER_LOOP = ARBITRARYINT; //ARBITRARY VALUE
+
     //Motor Positions
 
 }

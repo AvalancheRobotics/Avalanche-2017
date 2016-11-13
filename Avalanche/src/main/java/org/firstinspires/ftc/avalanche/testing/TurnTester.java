@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.avalanche.testing;
 
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
@@ -18,7 +23,7 @@ import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 @TeleOp(name = "Turn Tester", group = "TeleOp")
-public class TurnTester extends LinearOpMode {
+public class TurnTester extends LinearOpMode implements SensorEventListener {
 
 
     DcMotor motorLeftFront;
@@ -33,8 +38,17 @@ public class TurnTester extends LinearOpMode {
 
     MediaPlayer sanic;
 
+    private SensorManager sensorManager;
+    private Sensor sensor;
+
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
+
+
+        sensorManager = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+
         motorLeftBack = hardwareMap.dcMotor.get("LeftBack");
         motorLeftFront = hardwareMap.dcMotor.get("LeftFront");
         motorRightBack = hardwareMap.dcMotor.get("RightBack");
@@ -131,6 +145,8 @@ public class TurnTester extends LinearOpMode {
     }
 
     public void pivotToAngle(int angle, double speed) throws InterruptedException {
+
+
         int heading = getCorrectedHeading();
 
         double power;
@@ -268,5 +284,14 @@ public class TurnTester extends LinearOpMode {
         return targetHeading;
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 }
 

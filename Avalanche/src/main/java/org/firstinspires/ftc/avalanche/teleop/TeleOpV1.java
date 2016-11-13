@@ -10,8 +10,9 @@ import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
-import org.firstinspires.ftc.avalanche.subsystems.MotorController;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
+import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
+import org.firstinspires.ftc.avalanche.utilities.ValueStore;
 
 /**
  * Created by austinzhang on 11/3/16.
@@ -31,11 +32,9 @@ public class TeleOpV1 extends LinearOpMode{
 
     Servo servoLock;
 
-    private final double LOAD_LOCK = .2; //ARBITRARY VALUE
+    Servo servoBeaconShuttle;
 
-    private final double RELEASE_LOCK = .8; //ARBITRARY VALUE
-
-    private final int ONE_SHOOTER_LOOP = 1120; //ARBITRARY VALUE
+    Servo servoBeaconTilt;
 
 
     private void hardwareMapping() {
@@ -62,8 +61,16 @@ public class TeleOpV1 extends LinearOpMode{
         //Initialize lock
         servoLock = hardwareMap.servo.get("Lock");
 
-        servoLock.setPosition(RELEASE_LOCK);
+        servoLock.setPosition(ValueStore.LOCK_LOAD);
 
+        //Initialize beacon servos
+        servoBeaconShuttle = hardwareMap.servo.get("BeaconShuttle");
+
+        servoBeaconShuttle.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
+
+        servoBeaconTilt = hardwareMap.servo.get("BeaconTilt");
+
+        servoBeaconTilt.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
     }
 
     @Override
@@ -92,28 +99,48 @@ public class TeleOpV1 extends LinearOpMode{
             }
 
             if (gamepad2.a) {
-                servoLock.setPosition(LOAD_LOCK);
+                servoLock.setPosition(ValueStore.LOCK_LOAD);
             }
 
             if (gamepad2.b) {
-                servoLock.setPosition(RELEASE_LOCK);
+                servoLock.setPosition(ValueStore.LOCK_RELEASE);
             }
 
 
             //Load Lock and Launch Ball
             if (gamepad2.y) {
-                servoLock.setPosition(LOAD_LOCK);
+                loadAndLaunch();
+            }
 
-                servoLock.setPosition(RELEASE_LOCK);
-
-                launchOneBall();
+            if (ScaleInput.scale(gamepad2.left_trigger) > 0) {
+                motorShooter.setPower(ScaleInput.scale(gamepad2.left_trigger));
+            }
+            else {
+                motorShooter.setPower(0);
             }
 
             idle();
         }
     }
 
-    private void launchOneBall() {
+    private void loadAndLaunch() throws InterruptedException {
+        servoLock.setPosition(ValueStore.LOCK_LOAD);
+
+        Thread.sleep(1000);
+
+        servoLock.setPosition(ValueStore.LOCK_RELEASE);
+
+        launchOneBall();
+    }
+
+    private void launchOneBall() throws InterruptedException {
+        motorShooter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorShooter.setTargetPosition(motorShooter.getCurrentPosition() + ValueStore.ONE_SHOOTER_LOOP);
+        motorShooter.setPower(1);
+        while (motorShooter.isBusy()) {
+            idle();
+        }
+        motorShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }
