@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.avalanche.teleop;
 
-import android.media.MediaPlayer;
-
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,9 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.avalanche.enums.TeamColor;
 import org.firstinspires.ftc.avalanche.subsystems.AutoDriveTrainController;
 import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
-import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
-import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 @TeleOp(name = "AutoDrive", group = "TeleOp")
 public class AutoDrive extends LinearOpMode{
@@ -72,11 +68,11 @@ public class AutoDrive extends LinearOpMode{
         while (opModeIsActive()) {
 
             if (gamepad1.y) {
-                autoDriveTrain.gyroDrive(.6 , distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6 , distance, autoDriveTrain.getCorrectedHeading());
             }
 
             if (gamepad1.a) {
-                autoDriveTrain.gyroDrive(.6 , -distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6 , -distance, autoDriveTrain.getCorrectedHeading());
             }
 
             if (gamepad1.b)

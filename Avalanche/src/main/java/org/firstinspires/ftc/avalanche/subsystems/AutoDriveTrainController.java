@@ -38,14 +38,14 @@ import org.firstinspires.ftc.avalanche.utilities.ColorReader;
 
 public class AutoDriveTrainController {
 
-    static final double COUNTS_PER_ODOMETER_REV = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double COUNTS_PER_MOTOR_REV = 1120;
-    static final double DRIVE_GEAR_REDUCTION = 1.0 ;     // This is < 1.0 if geared UP
-    static final double ODOMETER_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    static final double WHEEL_DIAMETER = 4.0;
-    static final double COUNTS_PER_INCH_ODOMETER = (COUNTS_PER_ODOMETER_REV) /
+    private static final double COUNTS_PER_ODOMETER_REV = 1440 ;    // eg: TETRIX Motor Encoder
+    private static final double COUNTS_PER_MOTOR_REV = 1120;
+    private static final double DRIVE_GEAR_REDUCTION = 1.0 ;     // This is < 1.0 if geared UP
+    private static final double ODOMETER_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
+    private static final double WHEEL_DIAMETER = 4.0;
+    private static final double COUNTS_PER_INCH_ODOMETER = (COUNTS_PER_ODOMETER_REV) /
             (ODOMETER_DIAMETER_INCHES * Math.PI);
-    static final double COUNTS_PER_INCH_DRIVE_WHEEL = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+    private static final double COUNTS_PER_INCH_DRIVE_WHEEL = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER * Math.PI);
 
     // These constants define the desired driving/control characteristics
@@ -53,9 +53,9 @@ public class AutoDriveTrainController {
     public static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
     public static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
 
-    static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
-    static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
-    static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
+    private static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
+    private static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
+    private static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
 
     private int initLight;
     private LinearOpMode linearOpMode;
@@ -78,14 +78,14 @@ public class AutoDriveTrainController {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
-        autoDriveTrain.gyroDrive(autoDriveTrain.DRIVE_SPEED, 48.0, 0.0);        // Drive FWD 48 inches
+        autoDriveTrain.moveDistanceAtSpeedOnHeading(autoDriveTrain.DRIVE_SPEED, 48.0, 0.0);        // Drive FWD 48 inches
         autoDriveTrain.gyroTurn(autoDriveTrain.TURN_SPEED, -45.0);              // Turn  CCW to -45 Degrees
         autoDriveTrain.gyroHold(autoDriveTrain.TURN_SPEED, -45.0, 0.5);         // Hold -45 Deg heading for a 1/2 second
         autoDriveTrain.gyroTurn(autoDriveTrain.TURN_SPEED, 45.0);               // Turn  CW  to  45 Degrees
         autoDriveTrain.gyroHold(autoDriveTrain.TURN_SPEED, 45.0, 0.5);          // Hold  45 Deg heading for a 1/2 second
         autoDriveTrain.gyroTurn(autoDriveTrain.TURN_SPEED, 0.0);                // Turn  CW  to   0 Degrees
         autoDriveTrain.gyroHold(autoDriveTrain.TURN_SPEED, 0.0, 1.0);           // Hold  0 Deg heading for a 1 second
-        autoDriveTrain.gyroDrive(autoDriveTrain.DRIVE_SPEED, -48.0, 0.0);       // Drive REV 48 inches
+        autoDriveTrain.moveDistanceAtSpeedOnHeading(autoDriveTrain.DRIVE_SPEED, -48.0, 0.0);       // Drive REV 48 inches
         autoDriveTrain.gyroHold(autoDriveTrain.TURN_SPEED, 0.0, 0.5);           // Hold  0 Deg heading for a 1/2 second
         autoDriveTrain.driveToLine(autoDriveTrain.DRIVE_SPEED, 8000);           //Drive at the set speed until 8 seconds has passed or until you reach a white line
     }
@@ -148,11 +148,8 @@ public class AutoDriveTrainController {
         double  steer;
         double  leftSpeed;
         double  rightSpeed;
-        double  angle;
 
         driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        angle = getCorrectedHeading();
 
         driveTrain.setLeftDrivePower(speed);
         driveTrain.setRightDrivePower(speed);
@@ -173,24 +170,6 @@ public class AutoDriveTrainController {
                 colorSensor.red() + colorSensor.green() + colorSensor.blue())
                 && !timeout)
         {
-            // adjust relative speed based on heading error.
-            /*error = getError(angle);
-            steer = getSteer(error, P_DRIVE_COEFF);
-
-            leftSpeed = speed - steer;
-            rightSpeed = speed + steer;
-
-            // Normalize speeds if any one exceeds +/- 1.0;
-            max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-            if (max > 1.0)
-            {
-                leftSpeed /= max;
-                rightSpeed /= max;
-            }
-
-            driveTrain.setLeftDrivePower(leftSpeed);
-            driveTrain.setRightDrivePower(rightSpeed);*/
-
             // If true this means that we timed out before we detected the white tape, therefore we're not on white.
             timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
 
@@ -216,53 +195,7 @@ public class AutoDriveTrainController {
      */
     public boolean driveToLine(double speed) throws InterruptedException
     {
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
-        double  angle;
-
-        driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        angle = getCorrectedHeading();
-
-        driveTrain.setLeftDrivePower(speed);
-        driveTrain.setRightDrivePower(speed);
-
-        while (linearOpMode.opModeIsActive() && !ColorReader.isWhite(initLight,
-                colorSensor.red() + colorSensor.green() + colorSensor.blue()))
-        {
-            // adjust relative speed based on heading error.
-            /*error = getError(angle);
-            steer = getSteer(error, P_DRIVE_COEFF);
-
-            leftSpeed = speed - steer;
-            rightSpeed = speed + steer;
-
-            // Normalize speeds if any one exceeds +/- 1.0;
-            max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-            if (max > 1.0)
-            {
-                leftSpeed /= max;
-                rightSpeed /= max;
-            }
-
-            driveTrain.setLeftDrivePower(leftSpeed);
-            driveTrain.setRightDrivePower(rightSpeed);*/
-
-            // If true this means that we timed out before we detected the white tape, therefore we're not on white.
-            // Allow time for other processes to run.
-            linearOpMode.idle();
-        }
-
-        // keep looping while we are still active, we haven't taken too long (reached timeout)
-        // and we haven't reached the white line yet.
-
-        driveTrain.setLeftDrivePower(0);
-        driveTrain.setRightDrivePower(0);
-
-        return true;
+        return driveToLine(speed, Double.MAX_VALUE);
     }
 
     /**
@@ -279,7 +212,7 @@ public class AutoDriveTrainController {
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from current heading.
      */
-    public void gyroDrive (double speed, double distance, double angle) throws InterruptedException
+    public void moveDistanceAtSpeedOnHeading(double speed, double distance, double angle) throws InterruptedException
     {
         int newLeftBackTarget;
         int newRightBackTarget;
@@ -523,10 +456,10 @@ public class AutoDriveTrainController {
      *                  If a relative angle is required, add/subtract from current heading.
      * @param PCoeff    Proportional Gain coefficient
      */
-    boolean onHeading(double speed, double angle, double PCoeff) {
-        double   error ;
-        double   steer ;
-        boolean  onTarget = false ;
+    private boolean onHeading(double speed, double angle, double PCoeff) {
+        double error ;
+        double steer ;
+        boolean onTarget = false ;
         double leftSpeed;
         double rightSpeed;
 
@@ -537,13 +470,11 @@ public class AutoDriveTrainController {
         linearOpMode.telemetry.update();
 
         if (Math.abs(error) <= HEADING_THRESHOLD) {
-            steer = 0.0;
             leftSpeed  = 0.0;
             rightSpeed = 0.0;
             onTarget = true;
         }
         else {
-            steer = getSteer(error, PCoeff);
             rightSpeed  = speed * steer;
             leftSpeed   = -rightSpeed;
         }
@@ -565,7 +496,7 @@ public class AutoDriveTrainController {
      * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
      *          +ve error means the robot should turn LEFT (CCW) to reduce error.
      */
-    public double getError(double targetAngle) {
+    private double getError(double targetAngle) {
 
         double robotError;
 
@@ -582,7 +513,7 @@ public class AutoDriveTrainController {
      * @param PCoeff  Proportional Gain Coefficient
      * @return
      */
-    public double getSteer(double error, double PCoeff) {
+    private double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
@@ -596,12 +527,12 @@ public class AutoDriveTrainController {
         double power;
         double proportionalConst = 0.004;
 
-        double topCeiling = speed;
+        @SuppressWarnings("all") double topCeiling = speed;
         double bottomCeiling = -speed;
         double topFloor = .05;
         double bottomFloor = -.05;
 
-        int target = angle;
+        @SuppressWarnings("all") int target = angle;
 
         while (! (heading > target - 1 && heading < target + 1) ) {
 
@@ -647,7 +578,7 @@ public class AutoDriveTrainController {
         double power;
         double proportionalConst = 0.004;
 
-        double topCeiling = speed;
+        @SuppressWarnings("all") double topCeiling = speed;
         double bottomCeiling = -speed;
         double topFloor = .05;
         double bottomFloor = -.05;
