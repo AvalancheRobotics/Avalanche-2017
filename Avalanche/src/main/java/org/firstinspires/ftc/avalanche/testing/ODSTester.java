@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
  * class for testing out optical distance sensor as possible alternative for
  * color sensor as line detector
 **/
-@TeleOp(name = "ODS Tester", group = "Utilities")
+@TeleOp(name = "ODS Tester", group = "Testing")
 public class ODSTester extends LinearOpMode {
 
     OpticalDistanceSensor odsSensor;  // Hardware Device Object

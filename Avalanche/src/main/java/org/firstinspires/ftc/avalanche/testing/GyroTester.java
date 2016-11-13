@@ -8,11 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.avalanche.R;
 
 /**
- * Created by Austin on 9/13/2016.
  * The purpose of this program is to find out how much
  * the gyroscope drifts so we can decide whether or not to apply a low pass filter.
+ *
+ * Created by Austin on 9/13/2016.
  */
-@TeleOp(name = "Gyro Tester", group = "Utilities")
+@TeleOp(name = "Gyro Tester", group = "Testing")
 public class GyroTester extends LinearOpMode {
 
     ModernRoboticsI2cGyro gyro;

@@ -16,6 +16,8 @@ import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 import org.firstinspires.ftc.avalanche.utilities.ValueStore;
 
 /**
+ * Kept for reference only, do not make new changes to this file.
+ *
  * Created by austinzhang on 11/3/16.
  */
 

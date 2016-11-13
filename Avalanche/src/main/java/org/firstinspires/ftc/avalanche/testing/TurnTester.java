@@ -22,7 +22,7 @@ import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
-@TeleOp(name = "Turn Tester", group = "TeleOp")
+@TeleOp(name = "Turn Tester", group = "Testing")
 public class TurnTester extends LinearOpMode implements SensorEventListener {
 
 

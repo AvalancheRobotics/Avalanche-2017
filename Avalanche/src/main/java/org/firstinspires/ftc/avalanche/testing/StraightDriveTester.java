@@ -14,7 +14,7 @@ import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 
-@TeleOp(name = "Straight Drive Tester", group = "TeleOp")
+@TeleOp(name = "Straight Drive Tester", group = "Testing")
 public class StraightDriveTester extends LinearOpMode {
 
 
