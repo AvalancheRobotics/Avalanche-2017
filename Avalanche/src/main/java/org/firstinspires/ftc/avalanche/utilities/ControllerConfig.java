@@ -31,7 +31,7 @@ public interface ControllerConfig {
     boolean ReverseHarvesterButtonPressed();
     boolean LockPositionButtonPressed();
     boolean ShooterActivationButtonPressed();
-    boolean ShootOneBall();
+    float ShootOneBall();
     boolean ExtendButtonPresser();
     boolean RetractButtonPresser();
     boolean TiltButtonPresserLeftUp();
