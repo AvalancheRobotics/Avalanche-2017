@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.avalanche.utilities;
+package org.firstinspires.ftc.avalanche.controls;
 
 /**
  * An interface that allows binding of different keys to different actions.
@@ -31,7 +31,7 @@ public interface ControllerConfig {
     boolean ReverseHarvesterButtonPressed();
     boolean LockPositionButtonPressed();
     boolean ShooterActivationButtonPressed();
-    boolean ShootOneBall();
+    float ShootOneBall();
     boolean ExtendButtonPresser();
     boolean RetractButtonPresser();
     boolean TiltButtonPresserLeftUp();

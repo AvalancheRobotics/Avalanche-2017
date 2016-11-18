@@ -1,8 +1,6 @@
-package org.firstinspires.ftc.avalanche.teleop;
+package org.firstinspires.ftc.avalanche.controls;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-
-import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
 
 /**
  * Created by Nicholas on 10/23/16.
@@ -31,7 +29,7 @@ public class DefaultControls implements ControllerConfig
     public boolean forward() {return gamepad1.y;}
     public boolean ReverseHarvesterButtonPressed() {return gamepad2.b;}
     public boolean LockPositionButtonPressed() {return gamepad2.left_bumper;}
-    public boolean ShootOneBall() {return gamepad2.right_trigger > 0.7;}
+    public float ShootOneBall() {return gamepad2.right_trigger;}
     public boolean ExtendButtonPresser() {return gamepad2.right_stick_y > 0.5;}
     public boolean RetractButtonPresser() {return gamepad2.right_stick_y < -0.5;}
     public boolean TiltButtonPresserLeftUp() {return gamepad2.right_stick_x < -0.5;}

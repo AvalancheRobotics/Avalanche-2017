@@ -8,14 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.avalanche.R;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 
-@TeleOp(name = "Straight Drive Tester", group = "TeleOp")
+@TeleOp(name = "Straight Drive Tester", group = "Testing")
 public class StraightDriveTester extends LinearOpMode {
 
 
@@ -104,19 +103,19 @@ public class StraightDriveTester extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.a) {
-                gyroDrive(.6, -10, 0);
+                moveDistanceAtSpeedOnHeading(.6, -10, 0);
             }
 
             if (gamepad1.x) {
-                gyroDrive(.2, -10, 0);
+                moveDistanceAtSpeedOnHeading(.2, -10, 0);
             }
 
             if (gamepad1.b) {
-                gyroDrive(.1, -10, 0);
+                moveDistanceAtSpeedOnHeading(.1, -10, 0);
             }
 
             if (gamepad1.y) {
-                gyroDrive(.6, 10, 0);
+                moveDistanceAtSpeedOnHeading(.6, 10, 0);
             }
 
             idle();
@@ -133,7 +132,7 @@ public class StraightDriveTester extends LinearOpMode {
         return targetHeading;
     }
 
-    public void gyroDrive(double speed, double distance, double angle) throws InterruptedException {
+    public void moveDistanceAtSpeedOnHeading(double speed, double distance, double angle) throws InterruptedException {
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {

@@ -1,27 +1,28 @@
 package org.firstinspires.ftc.avalanche.teleop;
 
-import android.media.MediaPlayer;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.avalanche.controls.DefaultControls;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
-import org.firstinspires.ftc.avalanche.utilities.ControllerConfig;
+import org.firstinspires.ftc.avalanche.controls.ControllerConfig;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
+import org.firstinspires.ftc.avalanche.utilities.ValueStore;
 
 /**
- *
+ * The main Teleop class used for production (competition) purposes.
  *
  * Created by Nicholas on 11/7/16
+ * Edited by Keith on 11/13/16
  */
-@TeleOp(name = "FullFuncTeleOp", group = "TeleOp")
-public class FullFunctionTeleOp extends LinearOpMode{
+@TeleOp(name = "Main Teleop", group = "TeleOp")
+public class MainTeleop extends LinearOpMode{
 
     private ControllerConfig controls;
     private DcMotor motorLeftFront;
@@ -243,10 +244,12 @@ public class FullFunctionTeleOp extends LinearOpMode{
             }
 
             if (controls.LoadAndShootButtonPressed()) {
-                servoLock.setPosition(LOAD_LOCK);
+                loadAndLaunch();
+            }
 
-                servoLock.setPosition(RELEASE_LOCK);
-
+            motorShooter.setPower(ScaleInput.scale(controls.ShootOneBall()));
+            if (controls.ShootOneBall() > 0.5)
+            {
                 launchOneBall();
             }
 
@@ -271,7 +274,25 @@ public class FullFunctionTeleOp extends LinearOpMode{
         return (double)Math.round(value * 10d) / 10d;
     }
 
-    private void launchOneBall(){}
+    private void loadAndLaunch() throws InterruptedException {
+        servoLock.setPosition(ValueStore.LOCK_LOAD);
+
+        Thread.sleep(1000);
+
+        servoLock.setPosition(ValueStore.LOCK_RELEASE);
+
+        launchOneBall();
+    }
+
+    private void launchOneBall() throws InterruptedException {
+        motorShooter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorShooter.setTargetPosition(motorShooter.getCurrentPosition() + ValueStore.ONE_SHOOTER_LOOP);
+        motorShooter.setPower(1);
+        while (motorShooter.isBusy()) {
+            idle();
+        }
+        motorShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
 }
 

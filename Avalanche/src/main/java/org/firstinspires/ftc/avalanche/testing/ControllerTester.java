@@ -11,7 +11,7 @@ import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 
-@TeleOp(name = "Controller Tester", group = "Utilities")
+@TeleOp(name = "Controller Tester", group = "Testing")
 public class ControllerTester extends LinearOpMode {
 
 
