@@ -36,9 +36,13 @@ public class TeleOpV1 extends LinearOpMode{
 
     Servo servoBeaconTilt;
 
+    boolean singleController = true;
+
 
     private void hardwareMapping() {
         driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
+
+        driveTrain.reverseMotors();
 
         //Initialize harvester
         motorHarvester = hardwareMap.dcMotor.get("Harvester");
@@ -84,39 +88,84 @@ public class TeleOpV1 extends LinearOpMode{
 
         // Go go gadget robot!
         while (opModeIsActive()) {
-            driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
 
-            if (gamepad1.right_trigger > .7) {
-                motorHarvester.setPower(0);
+            if (gamepad1.dpad_up) {
+                singleController = !singleController;
             }
 
-            if (gamepad1.left_bumper) {
-                motorHarvester.setPower(-1);
+            if (singleController) {
+
+                driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+
+                if (gamepad1.right_trigger > .7) {
+                    motorHarvester.setPower(0);
+                }
+
+                if (gamepad1.left_bumper) {
+                    motorHarvester.setPower(-1);
+                }
+
+                if (gamepad1.right_bumper) {
+                    motorHarvester.setPower(1);
+                }
+
+                if (gamepad1.a) {
+                    servoLock.setPosition(ValueStore.LOCK_LOAD);
+                }
+
+                if (gamepad1.b) {
+                    servoLock.setPosition(ValueStore.LOCK_RELEASE);
+                }
+
+
+                //Load Lock and Launch Ball
+                if (gamepad1.y) {
+                    loadAndLaunch();
+                }
+
+                if (ScaleInput.scale(gamepad1.left_trigger) > 0) {
+                    motorShooter.setPower(Math.abs(ScaleInput.scale(gamepad1.left_trigger)));
+                } else {
+                    motorShooter.setPower(0);
+                }
+
             }
 
-            if (gamepad1.right_bumper) {
-                motorHarvester.setPower(1);
-            }
-
-            if (gamepad2.a) {
-                servoLock.setPosition(ValueStore.LOCK_LOAD);
-            }
-
-            if (gamepad2.b) {
-                servoLock.setPosition(ValueStore.LOCK_RELEASE);
-            }
-
-
-            //Load Lock and Launch Ball
-            if (gamepad2.y) {
-                loadAndLaunch();
-            }
-
-            if (ScaleInput.scale(gamepad2.left_trigger) > 0) {
-                motorShooter.setPower(ScaleInput.scale(gamepad2.left_trigger));
-            }
             else {
-                motorShooter.setPower(0);
+
+                driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+
+                if (gamepad1.right_trigger > .7 || gamepad2.right_trigger > .7) {
+                    motorHarvester.setPower(0);
+                }
+
+                if (gamepad1.left_bumper || gamepad2.left_bumper) {
+                    motorHarvester.setPower(-1);
+                }
+
+                if (gamepad1.right_bumper || gamepad2.right_bumper) {
+                    motorHarvester.setPower(1);
+                }
+
+                if (gamepad2.a) {
+                    servoLock.setPosition(ValueStore.LOCK_LOAD);
+                }
+
+                if (gamepad2.b) {
+                    servoLock.setPosition(ValueStore.LOCK_RELEASE);
+                }
+
+
+                //Load Lock and Launch Ball
+                if (gamepad2.y) {
+                    loadAndLaunch();
+                }
+
+                if (ScaleInput.scale(gamepad2.left_trigger) > 0) {
+                    motorShooter.setPower(Math.abs(ScaleInput.scale(gamepad2.left_trigger)));
+                } else {
+                    motorShooter.setPower(0);
+                }
             }
 
             idle();
@@ -129,6 +178,12 @@ public class TeleOpV1 extends LinearOpMode{
         Thread.sleep(1000);
 
         servoLock.setPosition(ValueStore.LOCK_RELEASE);
+
+        Thread.sleep(1000);
+
+        servoLock.setPosition(ValueStore.LOCK_LOAD);
+
+        Thread.sleep(500);
 
         launchOneBall();
     }

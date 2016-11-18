@@ -41,7 +41,7 @@ public class DriveTrainController extends MotorController {
         reverseMotors(0);
         reverseMotors(2);
 
-        setZeroPowerBehavior(true);
+        setZeroPowerBehavior(false);
 
         usingTankDrive = true;
     }
@@ -62,6 +62,13 @@ public class DriveTrainController extends MotorController {
         usingTankDrive = tankDrive;
     }
 
+
+    public void reverseMotors() {
+        reverseMotors(0);
+        reverseMotors(1);
+        reverseMotors(2);
+        reverseMotors(3);
+    }
 
     //Functions by taking inputs (most likely joystick) and squaring them, providing more precise controls when moving slowly
     //When joysticks are not in use, the wheels lock in place using PID

@@ -15,16 +15,16 @@ public class ValueStore {
     /** Button Presser Values */
 
     //Distance to extend button presser to before reaching beacon
-    public static final double BUTTON_PRESSER_DRIVING = 0.6;
+    public static final double BUTTON_PRESSER_DRIVING = 0.45;
 
     //Distance to extend button presser to press button
-    public static final double BUTTON_PRESSER_PRESSED = 0.34;
+    public static final double BUTTON_PRESSER_PRESSED = 0.6;
 
     //Button presser's stowed position
-    public static final double BUTTON_PRESSER_RETRACTED = 0.84;
+    public static final double BUTTON_PRESSER_RETRACTED = 0.3;
 
     //Distance to extend button presser to measure colors
-    public static final double BUTTON_PRESSER_MEASURE = 0.38;
+    public static final double BUTTON_PRESSER_MEASURE = .55;
 
     //Button presser's stowed angle
     public static final double BUTTON_PRESSER_STORE_ANGLE = 0.55;
@@ -38,11 +38,11 @@ public class ValueStore {
     //Button presser's time to move from the measuring position to the pressing position
     public static final double TIME_TO_BUTTON_PRESS_FROM_MEASURE_DISTANCE_MILLIS = 2000; //ARBITRARY
 
-    public static final double LOCK_LOAD = ARBITRARYDOUBLE;
+    public static final double LOCK_LOAD = .0966;
 
-    public static final double LOCK_RELEASE = ARBITRARYDOUBLE;
+    public static final double LOCK_RELEASE = .3834;
 
-    public static final int ONE_SHOOTER_LOOP = ARBITRARYINT; //ARBITRARY VALUE
+    public static final int ONE_SHOOTER_LOOP = 1440; //ARBITRARY VALUE
 
     //Motor Positions
 
