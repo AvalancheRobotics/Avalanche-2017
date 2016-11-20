@@ -5,17 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.avalanche.enums.TeamColor;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
-import org.firstinspires.ftc.avalanche.subsystems.AutoDriveTrainController;
-import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
-import org.firstinspires.ftc.avalanche.controls.DefaultControls;
-import org.firstinspires.ftc.avalanche.controls.ControllerConfig;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ColorReader;
 
@@ -36,6 +30,10 @@ public class AutoDriveToLineAndAlignTester extends LinearOpMode {
         odometer = hardwareMap.dcMotor.get("Odometer");
         lineRight = hardwareMap.colorSensor.get("LineRight");
         lineLeft = hardwareMap.colorSensor.get("LineLeft");
+
+        telemetry.addData("Init", "done");
+        telemetry.update();
+
     }
 
     @Override
@@ -47,6 +45,12 @@ public class AutoDriveToLineAndAlignTester extends LinearOpMode {
 
         // Go go gadget robot!
         while (opModeIsActive()) {
+
+            if (gamepad1.a) {
+                driveToLineAndAlign(10000);
+            }
+
+            driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
 
             telemetry.update();
             idle();

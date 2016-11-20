@@ -1,17 +1,11 @@
 package org.firstinspires.ftc.avalanche.subsystems;
 
-import android.media.MediaPlayer;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.avalanche.R;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
@@ -190,6 +184,8 @@ public class AutoDriveTrainController {
         // Ensure that the opmode is still active
         if (linearOpMode.opModeIsActive()) {
 
+            driveTrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             int heading = getCorrectedHeading();
 
             int distanceInOdometerTicks = (int) ((distance - .5) * COUNTS_PER_INCH_ODOMETER); //SUBTRACT .5 inches because robot has tendency to overshoot.
@@ -202,7 +198,6 @@ public class AutoDriveTrainController {
 
             driveTrain.setLeftDrivePower(getPower(distance, .1, .08, speed));
             driveTrain.setRightDrivePower(getPower(distance, .1, .08, speed));
-            driveTrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             while (!(odometerTarget + 100 > odometerCurrentPosition && odometerTarget - 100 < odometerCurrentPosition)) {
                 int distanceLeft = odometerTarget - odometerCurrentPosition;
@@ -264,6 +259,7 @@ public class AutoDriveTrainController {
 
     public void pivotToAngle(int angle, double speed) throws InterruptedException {
 
+        driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int heading = getCorrectedHeading();
 
@@ -277,7 +273,8 @@ public class AutoDriveTrainController {
 
         int target = angle;
 
-        while (! (heading > target - 1 && heading < target + 1) ) {
+
+        while (! (heading > target - 1 && heading < target + 1) && linearOpMode.opModeIsActive()) {
 
             long currentTime = System.currentTimeMillis();
 
@@ -323,6 +320,7 @@ public class AutoDriveTrainController {
 
     public void turnUsingOneSide(int angle, double speed) throws InterruptedException {
 
+        driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int heading = getCorrectedHeading();
 
