@@ -18,10 +18,6 @@ import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 public class StraightDriveTester extends LinearOpMode {
 
 
-    DcMotor motorLeftFront;
-    DcMotor motorRightFront;
-    DcMotor motorLeftBack;
-    DcMotor motorRightBack;
     DcMotor odometer;
 
     DriveTrainController driveTrain;
@@ -30,37 +26,20 @@ public class StraightDriveTester extends LinearOpMode {
     int offset;
     ModernRoboticsI2cGyro gyro;
 
-    MediaPlayer sanic;
 
     static final int ODOMETER_INVERSED = -1;
 
-    static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
-    static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
-    static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
-
-    static final double COUNTS_PER_ODOMETER_REV = 1440;    // eg: TETRIX Motor Encoder
     static final double COUNTS_PER_MOTOR_REV = 1120;
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
-    static final double ODOMETER_DIAMETER_INCHES = 2.0;     // For figuring circumference
     static final double WHEEL_DIAMETER = 4.0;
-    static final double COUNTS_PER_INCH_ODOMETER = (COUNTS_PER_ODOMETER_REV) /
-            (ODOMETER_DIAMETER_INCHES * Math.PI);
+    static final double COUNTS_PER_INCH_ODOMETER = 360;
     static final double COUNTS_PER_INCH_DRIVE_WHEEL = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER * Math.PI);
-
-    // These constants define the desired driving/control characteristics
-    // The can/should be tweaked to suite the specific robot drive train.
-    public static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
-    public static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
 
 
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
-        motorLeftBack = hardwareMap.dcMotor.get("LeftBack");
-        motorLeftFront = hardwareMap.dcMotor.get("LeftFront");
-        motorRightBack = hardwareMap.dcMotor.get("RightBack");
-        motorRightFront = hardwareMap.dcMotor.get("RightFront");
-        odometer = hardwareMap.dcMotor.get("Odometer");
+        odometer = hardwareMap.dcMotor.get("Harvester");
 
         gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("Gyro");
 
@@ -71,7 +50,7 @@ public class StraightDriveTester extends LinearOpMode {
 
         odometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odometer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        odometer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        odometer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         odometer.setPower(0);
 
 
@@ -107,11 +86,11 @@ public class StraightDriveTester extends LinearOpMode {
             }
 
             if (gamepad1.x) {
-                moveDistanceAtSpeedOnHeading(.2, -10, 0);
+                moveDistanceAtSpeedOnHeading(.6, -20, 0);
             }
 
             if (gamepad1.b) {
-                moveDistanceAtSpeedOnHeading(.1, -10, 0);
+                moveDistanceAtSpeedOnHeading(.6, 20, 0);
             }
 
             if (gamepad1.y) {
@@ -139,9 +118,9 @@ public class StraightDriveTester extends LinearOpMode {
 
             int heading = getCorrectedHeading();
 
-            int distanceInOdometerTicks = (int) (distance * COUNTS_PER_INCH_ODOMETER);
+            int distanceInOdometerTicks = (int) ((distance - .5) * COUNTS_PER_INCH_ODOMETER); //SUBTRACT .5 inches because robot has tendency to overshoot.
 
-            int odometerTarget = -(odometer.getCurrentPosition() - distanceInOdometerTicks * ODOMETER_INVERSED);
+            int odometerTarget = (odometer.getCurrentPosition() - distanceInOdometerTicks * ODOMETER_INVERSED);
 
             int odometerCurrentPosition = odometer.getCurrentPosition();
 
@@ -152,7 +131,7 @@ public class StraightDriveTester extends LinearOpMode {
 
             driveTrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            while (!(odometerTarget + 10 > odometerCurrentPosition && odometerTarget - 10 < odometerCurrentPosition)) {
+            while (!(odometerTarget + 100 > odometerCurrentPosition && odometerTarget - 100 < odometerCurrentPosition)) {
                 int distanceLeft = odometerTarget - odometerCurrentPosition;
                 odometerCurrentPosition = odometer.getCurrentPosition();
 
@@ -162,8 +141,8 @@ public class StraightDriveTester extends LinearOpMode {
 
                 double steer = 0;//(heading - getCorrectedHeading()) * P_TURN_COEFF;
 
-                driveTrain.setLeftDrivePower(-getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER + steer, .1, .08, speed));
-                driveTrain.setRightDrivePower(-getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER - steer, .1, .08, speed));
+                driveTrain.setLeftDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER + steer, .035, .08, speed));
+                driveTrain.setRightDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER - steer, .035, .08, speed));
 
                 driveTrain.setTargetPosition(0, odometerTicksToWheelTicks + driveTrain.getEncoderValue(0));
                 driveTrain.setTargetPosition(1, odometerTicksToWheelTicks + driveTrain.getEncoderValue(1));

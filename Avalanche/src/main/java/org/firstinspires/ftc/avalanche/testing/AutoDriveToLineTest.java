@@ -82,11 +82,11 @@ public class AutoDriveToLineTest extends LinearOpMode
         while (opModeIsActive()) {
 
             if (gamepad1.y) {
-                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, distance);
             }
 
             if (gamepad1.a) {
-                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -distance);
             }
 
             if (gamepad1.b)
@@ -141,18 +141,9 @@ public class AutoDriveToLineTest extends LinearOpMode
             }
 
             if (gamepad1.start) {
-                lastDrive = autoDriveTrain.driveToLine(speed, 100000);
+                lastDrive = autoDriveTrain.driveToLine(10000);
             }
 
-            if (gamepad1.right_bumper || gamepad1.left_bumper)
-            {
-                autoDriveTrain.goBackward();
-                telemetry.addData("Going", "Backward");
-            }
-            else
-            {
-                autoDriveTrain.stop();
-            }
 
             telemetry.addData("Distance", roundToOneDec(distance) + " inches");
             telemetry.addData("Speed", speed);

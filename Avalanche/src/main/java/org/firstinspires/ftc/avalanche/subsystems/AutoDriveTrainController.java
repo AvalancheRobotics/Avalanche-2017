@@ -38,24 +38,8 @@ import org.firstinspires.ftc.avalanche.utilities.ColorReader;
 
 public class AutoDriveTrainController {
 
-    private static final double COUNTS_PER_ODOMETER_REV = 1440 ;    // eg: TETRIX Motor Encoder
-    private static final double COUNTS_PER_MOTOR_REV = 1120;
-    private static final double DRIVE_GEAR_REDUCTION = 1.0 ;     // This is < 1.0 if geared UP
-    private static final double ODOMETER_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    private static final double WHEEL_DIAMETER = 4.0;
-    private static final double COUNTS_PER_INCH_ODOMETER = (COUNTS_PER_ODOMETER_REV) /
-            (ODOMETER_DIAMETER_INCHES * Math.PI);
-    private static final double COUNTS_PER_INCH_DRIVE_WHEEL = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER * Math.PI);
-
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    public static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
-    public static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
-
-    private static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
-    private static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
-    private static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
 
     private int initLight;
     private LinearOpMode linearOpMode;
@@ -67,6 +51,17 @@ public class AutoDriveTrainController {
     private long startTime;
     private int offset;
     private int drift;
+
+
+    static final int ODOMETER_INVERSED = -1;
+
+    static final double COUNTS_PER_MOTOR_REV = 1120;
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
+    static final double WHEEL_DIAMETER = 4.0;
+    static final double COUNTS_PER_INCH_ODOMETER = 360;
+    static final double COUNTS_PER_INCH_DRIVE_WHEEL = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER * Math.PI);
+    private static final double DRIVE_TO_LINE_SPEED = .1;
 
     //Example of how to run the AutoDriveTrainController
     /*
@@ -129,30 +124,25 @@ public class AutoDriveTrainController {
         offset = gyro.getHeading();
     }
 
+
     //Program automatically drives to white line while always facing the same direction
     //Uses gyroscope to maintain the same direction so robot doesn't drift off course
 
     /**
      * Drive to the white line, used primary for button pressing.
      *
-     * @param speed                 Max speed you want your robot to travel (from -1 to 1).
      * @param timeoutMillis         Max time in milliseconds you want your robot to drive before
      *                              giving up and stopping.
      * @throws InterruptedException If interrupted during idle.
      * @return boolean              Whether or not the robot reached the line before timeout.
      */
-    public boolean driveToLine(double speed, double timeoutMillis) throws InterruptedException
+    public boolean driveToLine(double timeoutMillis) throws InterruptedException
     {
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
 
         driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        driveTrain.setLeftDrivePower(speed);
-        driveTrain.setRightDrivePower(speed);
+        driveTrain.setLeftDrivePower(DRIVE_TO_LINE_SPEED);
+        driveTrain.setRightDrivePower(DRIVE_TO_LINE_SPEED);
 
         //if on line, move off
         while (ColorReader.isWhite(initLight,
@@ -186,354 +176,106 @@ public class AutoDriveTrainController {
         return !timeout;
     }
 
-    /**
-     * Drive to the white line, used primary for button pressing.
-     *
-     * @param speed                 Max speed you want your robot to travel (from -1 to 1).
-     * @throws InterruptedException If interrupted   during idle.
-     * @return boolean              Whether or not the robot reached the line before timeout.
-     */
-    public boolean driveToLine(double speed) throws InterruptedException
-    {
-        return driveToLine(speed, Double.MAX_VALUE);
+    //Returns corrected gyro angle
+    private int getCorrectedHeading() {
+        double elapsedSeconds = (System.nanoTime() - startTime) / 1000000000.0;
+        int totalDrift = (int) (elapsedSeconds / 5 * drift);
+        int targetHeading = gyro.getIntegratedZValue() - offset - totalDrift;
+
+        return targetHeading;
     }
 
-    /**
-     *  Method to drive on a fixed compass bearing (angle), based on odometer counts.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Driver stops the opmode running.
-     *
-     * @param speed      Target speed for forward motion.  Should allow for _/- variance for
-     *                   adjusting heading
-     * @param distance   Distance (in inches) to move from current position.  Negative distance
-     *                   means move backwards.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     */
-    public void moveDistanceAtSpeedOnHeading(double speed, double distance, double angle) throws InterruptedException
-    {
-        int newLeftBackTarget;
-        int newRightBackTarget;
-        int newLeftFrontTarget;
-        int newRightFrontTarget;
-        int totalOdometerTicks;
-        int totalDriveWheelTicks;
-        int odometerStartValue;
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
+    public void moveDistanceAtSpeedOnHeading(double speed, double distance) throws InterruptedException {
 
         // Ensure that the opmode is still active
         if (linearOpMode.opModeIsActive()) {
 
-            driveTrain.resetEncoders();
+            int heading = getCorrectedHeading();
 
-            odometerStartValue = odometer.getCurrentPosition();
+            int distanceInOdometerTicks = (int) ((distance - .5) * COUNTS_PER_INCH_ODOMETER); //SUBTRACT .5 inches because robot has tendency to overshoot.
 
-            totalOdometerTicks = (int) (distance * COUNTS_PER_INCH_ODOMETER);
+            int odometerTarget = (odometer.getCurrentPosition() - distanceInOdometerTicks * ODOMETER_INVERSED);
 
-            totalDriveWheelTicks = (int) (distance * COUNTS_PER_INCH_DRIVE_WHEEL);
+            int odometerCurrentPosition = odometer.getCurrentPosition();
 
-            int ticksTraveledOdometer = odometer.getCurrentPosition() - odometerStartValue;
+            odometer.setTargetPosition(odometerTarget);
 
-            // Determine new target position, and pass to motor controller
-            newLeftBackTarget = driveTrain.getEncoderValue(0) + totalDriveWheelTicks;
-            newRightBackTarget = driveTrain.getEncoderValue(1) + totalDriveWheelTicks;
-            newLeftFrontTarget = driveTrain.getEncoderValue(2) + totalDriveWheelTicks;
-            newRightFrontTarget = driveTrain.getEncoderValue(3) + totalDriveWheelTicks;
-
-            // Set Target and Turn On RUN_TO_POSITION
-            driveTrain.setTargetPosition(0, newLeftBackTarget);
-            driveTrain.setTargetPosition(1, newRightBackTarget);
-            driveTrain.setTargetPosition(2, newLeftFrontTarget);
-            driveTrain.setTargetPosition(3, newRightFrontTarget);
-
+            driveTrain.setLeftDrivePower(getPower(distance, .1, .08, speed));
+            driveTrain.setRightDrivePower(getPower(distance, .1, .08, speed));
             driveTrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            // start motion.
-            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            driveTrain.setPower(speed);
+            while (!(odometerTarget + 100 > odometerCurrentPosition && odometerTarget - 100 < odometerCurrentPosition)) {
+                int distanceLeft = odometerTarget - odometerCurrentPosition;
+                odometerCurrentPosition = odometer.getCurrentPosition();
 
-            // keep looping while we are still active, and odometer has not yet reached its target position.
-            // The +- 5 is for allowing a bit of error since we're not going to be able to hit exactly on the odometer ticks
-            while (linearOpMode.opModeIsActive() && !(ticksTraveledOdometer > totalOdometerTicks - 5 && ticksTraveledOdometer < totalOdometerTicks + 5)){
+                int odometerTicksToWheelTicks;
+                odometerTicksToWheelTicks = (int) (distanceLeft / COUNTS_PER_INCH_ODOMETER * COUNTS_PER_INCH_DRIVE_WHEEL);
 
-                ticksTraveledOdometer = odometer.getCurrentPosition() - odometerStartValue;
 
-                //Convert odometer ticks to wheel ticks
-                int wheelTicksRemaining = (int) (((totalOdometerTicks - Math.abs(ticksTraveledOdometer)) / COUNTS_PER_INCH_ODOMETER) * COUNTS_PER_INCH_DRIVE_WHEEL);
+                double steer = 0;//(heading - getCorrectedHeading()) * P_TURN_COEFF;
 
-                // Set Target and Turn On RUN_TO_POSITION
+                driveTrain.setLeftDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER + steer, .035, .08, speed));
+                driveTrain.setRightDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER - steer, .035, .08, speed));
 
-                if (ticksTraveledOdometer > 0) {
-                    driveTrain.setTargetPosition(0, wheelTicksRemaining + driveTrain.getEncoderValue(0));
-                    driveTrain.setTargetPosition(1, wheelTicksRemaining + driveTrain.getEncoderValue(1));
-                    driveTrain.setTargetPosition(2, wheelTicksRemaining + driveTrain.getEncoderValue(2));
-                    driveTrain.setTargetPosition(3, wheelTicksRemaining + driveTrain.getEncoderValue(3));
-                }
-                else {
-                    driveTrain.setTargetPosition(0, -wheelTicksRemaining + driveTrain.getEncoderValue(0));
-                    driveTrain.setTargetPosition(1, -wheelTicksRemaining + driveTrain.getEncoderValue(1));
-                    driveTrain.setTargetPosition(2, -wheelTicksRemaining + driveTrain.getEncoderValue(2));
-                    driveTrain.setTargetPosition(3, -wheelTicksRemaining + driveTrain.getEncoderValue(3));
-                }
+                driveTrain.setTargetPosition(0, odometerTicksToWheelTicks + driveTrain.getEncoderValue(0));
+                driveTrain.setTargetPosition(1, odometerTicksToWheelTicks + driveTrain.getEncoderValue(1));
+                driveTrain.setTargetPosition(2, odometerTicksToWheelTicks + driveTrain.getEncoderValue(2));
+                driveTrain.setTargetPosition(3, odometerTicksToWheelTicks + driveTrain.getEncoderValue(3));
 
-                // adjust relative speed based on heading error.
-                error = getError(angle);
-                steer = getSteer(error, P_DRIVE_COEFF);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
-
-                leftSpeed = speed - steer;
-                rightSpeed = speed + steer;
-
-                // Normalize speeds if any one exceeds +/- 1.0;
-                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-
-                driveTrain.setLeftDrivePower(leftSpeed);
-                driveTrain.setRightDrivePower(rightSpeed);
-
-                linearOpMode.telemetry.addData("leftSpeed", leftSpeed);
-                linearOpMode.telemetry.addData("rightSpeed", rightSpeed);
-                linearOpMode.telemetry.addData("leftSpeed", leftSpeed);
-                linearOpMode.telemetry.addData("error", error);
-                linearOpMode.telemetry.addData("tickstraveled", ticksTraveledOdometer);
-                linearOpMode.telemetry.addData("totalodomticks", totalOdometerTicks);
-                linearOpMode.telemetry.addData("wheelticksremaining", wheelTicksRemaining);
+                linearOpMode.telemetry.addData("leftSpeed" , driveTrain.getPower(0));
+                linearOpMode.telemetry.addData("rightSpeed" , driveTrain.getPower(1));
+                linearOpMode.telemetry.addData("o2wticks" , odometerTicksToWheelTicks);
+                linearOpMode.telemetry.addData("otleft" , distanceLeft);
+                linearOpMode.telemetry.addData("odomTarget" , odometerTarget);
+                linearOpMode.telemetry.addData("odomCurrent" , odometerCurrentPosition);
 
 
                 linearOpMode.telemetry.update();
 
 
-
-                // Allow time for other processes to run.
                 linearOpMode.idle();
             }
 
-            // Stop all motion;
-            driveTrain.setPower(0);
-        }
-    }
-
-    public void gyroDriveEncodersOnly (double speed, double distance, double angle) throws InterruptedException
-    {
-        int newLeftBackTarget;
-        int newRightBackTarget;
-        int newLeftFrontTarget;
-        int newRightFrontTarget;
-        int moveCounts;
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
-
-        // Ensure that the opmode is still active
-        if (linearOpMode.opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            moveCounts = (int)(distance * COUNTS_PER_INCH_DRIVE_WHEEL);
-
-            newLeftBackTarget = driveTrain.getEncoderValue(0) + moveCounts;
-            newRightBackTarget = driveTrain.getEncoderValue(1) + moveCounts;
-            newLeftFrontTarget = driveTrain.getEncoderValue(2) + moveCounts;
-            newRightFrontTarget = driveTrain.getEncoderValue(3) + moveCounts;
-
-            // Set Target and Turn On RUN_TO_POSITION
-            driveTrain.setTargetPosition(0, newLeftBackTarget);
-            driveTrain.setTargetPosition(1, newRightBackTarget);
-            driveTrain.setTargetPosition(2, newLeftFrontTarget);
-            driveTrain.setTargetPosition(3, newRightFrontTarget);
-
-            driveTrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // start motion.
-            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            driveTrain.setPower(speed);
-
-            // keep looping while we are still active, and BOTH motors are running.
-            while (linearOpMode.opModeIsActive() && driveTrain.isBusy()) {
-
-                // adjust relative speed based on heading error.
-                error = getError(angle);
-                steer = getSteer(error, P_DRIVE_COEFF);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
-
-                leftSpeed = speed - steer;
-                rightSpeed = speed + steer;
-
-                // Normalize speeds if any one exceeds +/- 1.0;
-                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-
-                driveTrain.setLeftDrivePower(leftSpeed);
-                driveTrain.setRightDrivePower(rightSpeed);
-
-
-                // Allow time for other processes to run.
-                linearOpMode.idle();
-            }
-
-            // Stop all motion;
-            driveTrain.setPower(0);
-        }
-    }
-
-    /**
-     *  Method to spin on central axis to point in a new direction.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the heading (angle)
-     *  2) Driver stops the opmode running.
-     *
-     * @param speed Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     * @throws InterruptedException
-     */
-    public void gyroTurn (double speed, double angle) throws InterruptedException
-    {
-        // keep looping while we are still active, and not on heading.
-        while (linearOpMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF))
-        {
-            // Update telemetry & Allow time for other processes to run.
-            linearOpMode.idle();
-        }
-    }
-
-    /**
-     *  Method to obtain & hold a heading for a finite amount of time
-     *  Move will stop once the requested time has elapsed
-     *
-     * @param speed      Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     * @param holdTime   Length of time (in seconds) to hold the specified heading.
-     * @throws InterruptedException
-     */
-    public void gyroHold( double speed, double angle, double holdTime)
-            throws InterruptedException {
-
-        ElapsedTime holdTimer = new ElapsedTime();
-
-        // keep looping while we have time remaining.
-        holdTimer.reset();
-        while (linearOpMode.opModeIsActive() && (holdTimer.time() < holdTime)) {
-            // Update telemetry & Allow time for other processes to run.
-            onHeading(speed, angle, P_TURN_COEFF);
-            linearOpMode.idle();
         }
 
         // Stop all motion;
         driveTrain.setPower(0);
     }
 
-    /**
-     * Perform one cycle of closed loop heading control.
-     *
-     * @param speed     Desired speed of turn.
-     * @param angle     Absolute Angle (in Degrees) relative to last gyro reset.
-     *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                  If a relative angle is required, add/subtract from current heading.
-     * @param PCoeff    Proportional Gain coefficient
-     */
-    private boolean onHeading(double speed, double angle, double PCoeff) {
-        double error ;
-        double steer ;
-        boolean onTarget = false ;
-        double leftSpeed;
-        double rightSpeed;
+    private double getPower(double inchesFromTarget, double porpConstant, double floor, double ceiling) {
+        double power;
 
-        // determine turn power based on +/- error
-        error = getError(angle);
+        power = inchesFromTarget * porpConstant;
 
-        linearOpMode.telemetry.addData("currentAngle", getError(angle));
-        linearOpMode.telemetry.update();
+        int negative = 1;
 
-        if (Math.abs(error) <= HEADING_THRESHOLD) {
-            leftSpeed  = 0.0;
-            rightSpeed = 0.0;
-            onTarget = true;
-        }
-        else {
-            steer = getSteer(error, PCoeff);
-            rightSpeed  = speed * steer;
-            leftSpeed   = -rightSpeed;
+        if (power < 0) {
+            negative = -1;
         }
 
-        //Set motor run mode
-        driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        power = Math.abs(power);
 
-        // Send desired speeds to motors.
-        driveTrain.setLeftDrivePower(leftSpeed);
-        driveTrain.setRightDrivePower(rightSpeed);
+        power = Math.max(power, floor);
 
-        // Display it for the driver.
-        return onTarget;
+        power = Math.min(power, ceiling);
+
+        return power * negative;
     }
 
-    /**
-     * getError determines the error between the target angle and the robot's current heading
-     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
-     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
-     *          +ve error means the robot should turn LEFT (CCW) to reduce error.
-     */
-    private double getError(double targetAngle) {
-
-        double robotError;
-
-        // calculate error in -179 to +180 range
-        robotError = targetAngle - getCorrectedHeading();
-        while (robotError > 180)  robotError -= 360;
-        while (robotError <= -180) robotError += 360;
-        return robotError;
-    }
-
-    /**
-     * returns desired steering force.  +/- 1 range.  +ve = steer left
-     * @param error   Error angle in robot relative degrees
-     * @param PCoeff  Proportional Gain Coefficient
-     * @return
-     */
-    private double getSteer(double error, double PCoeff) {
-        return Range.clip(error * PCoeff, -1, 1);
-    }
-
-    //Pivots to the set angle
-    //NOTE: No other tasks will be performed while turning, LOCKS THREAD
-    //NOTE: Angle is ABSOLUTE ANGLE- Angles are relative to starting position, not current position
-    //Angle starts at 0 at the beginning of TeleOp, and all other angles are based off of that
     public void pivotToAngle(int angle, double speed) throws InterruptedException {
+
+
         int heading = getCorrectedHeading();
 
         double power;
         double proportionalConst = 0.004;
 
-        @SuppressWarnings("all") double topCeiling = speed;
+        double topCeiling = speed;
         double bottomCeiling = -speed;
         double topFloor = .05;
         double bottomFloor = -.05;
 
-        @SuppressWarnings("all") int target = angle;
+        int target = angle;
 
         while (! (heading > target - 1 && heading < target + 1) ) {
 
@@ -551,17 +293,24 @@ public class AutoDriveTrainController {
                 power = bottomFloor;
 
             if (target > heading) {
+                driveTrain.setLeftDrivePower(-power);
+                driveTrain.setRightDrivePower(power);
+
+                linearOpMode.telemetry.addData("turn", "turn left");
+                linearOpMode.telemetry.addData("corrected heading" , getCorrectedHeading());
+            }
+            else {
                 driveTrain.setLeftDrivePower(power);
                 driveTrain.setRightDrivePower(-power);
 
-            }
-            else {
-                driveTrain.setLeftDrivePower(-power);
-                driveTrain.setRightDrivePower(power);
+                linearOpMode.telemetry.addData("turn", "turn right");
+                linearOpMode.telemetry.addData("corrected heading" , getCorrectedHeading());
             }
 
+            linearOpMode.telemetry.update();
 
             heading = getCorrectedHeading();
+
 
             linearOpMode.idle();
 
@@ -572,26 +321,25 @@ public class AutoDriveTrainController {
 
     }
 
-    public void turnUsingLeftDrive(int angle, double speed, double timeoutMillis) throws InterruptedException
-    {
+    public void turnUsingOneSide(int angle, double speed) throws InterruptedException {
+
+
         int heading = getCorrectedHeading();
 
         double power;
         double proportionalConst = 0.004;
 
-        @SuppressWarnings("all") double topCeiling = speed;
+        double topCeiling = speed;
         double bottomCeiling = -speed;
         double topFloor = .05;
         double bottomFloor = -.05;
 
         int target = angle;
 
-        long startTime = System.currentTimeMillis();
+        while (! (heading > target - 1 && heading < target + 1) ) {
 
-        boolean timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
+            long currentTime = System.currentTimeMillis();
 
-        while (!(heading > target - 1 && heading < target + 1)  && !timeout)
-        {
             power = Math.abs((target - heading) * proportionalConst);
 
             if (power > topCeiling)
@@ -603,58 +351,33 @@ public class AutoDriveTrainController {
             else if (power > bottomFloor && power < 0)
                 power = bottomFloor;
 
-            if (target > heading)
-            {
+            if (target > heading) {
+                driveTrain.setLeftDrivePower(0);
+                driveTrain.setRightDrivePower(power);
+
+                linearOpMode.telemetry.addData("turn", "turn left");
+                linearOpMode.telemetry.addData("corrected heading" , getCorrectedHeading());
+            }
+            else {
                 driveTrain.setLeftDrivePower(power);
-                linearOpMode.telemetry.addData("Direction", "Left");
+                driveTrain.setRightDrivePower(0);
+
+                linearOpMode.telemetry.addData("turn", "turn right");
+                linearOpMode.telemetry.addData("corrected heading" , getCorrectedHeading());
             }
-            else
-            {
-                driveTrain.setLeftDrivePower(-power);
-                linearOpMode.telemetry.addData("Direction", "Right");
-            }
-
-            linearOpMode.telemetry.addData("Old Heading", heading);
-
-            heading = getCorrectedHeading();
-
-            linearOpMode.telemetry.addData("New Heading", heading);
-            linearOpMode.telemetry.addData("Power", power);
-
-            linearOpMode.telemetry.addData("Time", System.currentTimeMillis() - startTime);
 
             linearOpMode.telemetry.update();
 
-            timeout = System.currentTimeMillis() - startTime >= timeoutMillis;
+            heading = getCorrectedHeading();
+
 
             linearOpMode.idle();
+
         }
 
         driveTrain.setLeftDrivePower(0);
-    }
-
-
-    //Returns corrected gyro angle
-    public int getCorrectedHeading() {
-        double elapsedSeconds = (System.nanoTime() - startTime) / 1000000000.0;
-        int totalDrift = (int) (elapsedSeconds / 5 * drift);
-        int targetHeading = gyro.getIntegratedZValue() - offset - totalDrift;
-
-        return targetHeading;
-    }
-
-
-    //hacky methods for testing, not for use in production
-    public void goBackward()
-    {
-        driveTrain.setLeftDrivePower(-1);
-        driveTrain.setRightDrivePower(-1);
-    }
-
-    public void stop()
-    {
-        driveTrain.setLeftDrivePower(0);
         driveTrain.setRightDrivePower(0);
+
     }
 
 }

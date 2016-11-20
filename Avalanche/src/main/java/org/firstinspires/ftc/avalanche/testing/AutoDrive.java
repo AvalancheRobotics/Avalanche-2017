@@ -69,11 +69,11 @@ public class AutoDrive extends LinearOpMode{
         while (opModeIsActive()) {
 
             if (gamepad1.y) {
-                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6 , distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6 , distance);
             }
 
             if (gamepad1.a) {
-                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6 , -distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6 , -distance);
             }
 
             if (gamepad1.b)

@@ -23,13 +23,9 @@ import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 @TeleOp(name = "Turn Tester", group = "Testing")
-public class TurnTester extends LinearOpMode implements SensorEventListener {
+public class TurnTester extends LinearOpMode {
 
 
-    DcMotor motorLeftFront;
-    DcMotor motorRightFront;
-    DcMotor motorLeftBack;
-    DcMotor motorRightBack;
     DriveTrainController driveTrain;
     long startTime;
     int drift;
@@ -38,21 +34,9 @@ public class TurnTester extends LinearOpMode implements SensorEventListener {
 
     MediaPlayer sanic;
 
-    private SensorManager sensorManager;
-    private Sensor sensor;
 
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
-
-
-        sensorManager = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-
-
-        motorLeftBack = hardwareMap.dcMotor.get("LeftBack");
-        motorLeftFront = hardwareMap.dcMotor.get("LeftFront");
-        motorRightBack = hardwareMap.dcMotor.get("RightBack");
-        motorRightFront = hardwareMap.dcMotor.get("RightFront");
 
         gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("Gyro");
 
@@ -175,16 +159,18 @@ public class TurnTester extends LinearOpMode implements SensorEventListener {
                 power = bottomFloor;
 
             if (target > heading) {
-                driveTrain.setLeftDrivePower(power);
-                driveTrain.setRightDrivePower(-power);
-
-                telemetry.addData("turn", "turn left");
-            }
-            else {
                 driveTrain.setLeftDrivePower(-power);
                 driveTrain.setRightDrivePower(power);
 
+                telemetry.addData("turn", "turn left");
+                telemetry.addData("corrected heading" , getCorrectedHeading());
+            }
+            else {
+                driveTrain.setLeftDrivePower(power);
+                driveTrain.setRightDrivePower(-power);
+
                 telemetry.addData("turn", "turn right");
+                telemetry.addData("corrected heading" , getCorrectedHeading());
             }
 
             telemetry.update();
@@ -284,14 +270,5 @@ public class TurnTester extends LinearOpMode implements SensorEventListener {
         return targetHeading;
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 }
 
