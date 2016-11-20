@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.avalanche.controls.DefaultControls;
+import org.firstinspires.ftc.avalanche.controls.SingleControllerControls;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
@@ -18,6 +18,8 @@ import org.firstinspires.ftc.avalanche.utilities.ValueStore;
 /**
  * The main Teleop class used for production (competition) purposes.
  *
+ * TODO: Implement Button Pressor
+ *
  * Created by Nicholas on 11/7/16
  * Edited by Keith on 11/13/16
  */
@@ -25,10 +27,6 @@ import org.firstinspires.ftc.avalanche.utilities.ValueStore;
 public class MainTeleop extends LinearOpMode{
 
     private ControllerConfig controls;
-    private DcMotor motorLeftFront;
-    private DcMotor motorRightFront;
-    private DcMotor motorLeftBack;
-    private DcMotor motorRightBack;
     private DriveTrainController driveTrain;
 
     DcMotor motorHarvester;
@@ -45,25 +43,17 @@ public class MainTeleop extends LinearOpMode{
 
     Servo servoLock;
 
-    private final double LOAD_LOCK = .2; //ARBITRARY VALUE
+    Servo servoBeaconShuttle;
 
-    private final double RELEASE_LOCK = .8; //ARBITRARY VALUE
+    Servo servoBeaconTilt;
 
-    private final int ONE_SHOOTER_LOOP = 1120; //ARBITRARY VALUE
+    boolean singleController = false;
 
     //Initialize and Map All Hardware
     private void hardwareMapping() throws InterruptedException {
-        motorLeftBack = hardwareMap.dcMotor.get("LeftBack");
-        motorLeftFront = hardwareMap.dcMotor.get("LeftFront");
-        motorRightBack = hardwareMap.dcMotor.get("RightBack");
-        motorRightFront = hardwareMap.dcMotor.get("RightFront");
-
         driveTrain = new DriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
 
-        // Reset encoders
-        driveTrain.resetEncoders();
-
-        driveTrain.setControlMode(true);
+        driveTrain.reverseMotors();
 
         //Initialize harvester
         motorHarvester = hardwareMap.dcMotor.get("Harvester");
@@ -86,24 +76,33 @@ public class MainTeleop extends LinearOpMode{
         //Initialize lock
         servoLock = hardwareMap.servo.get("Lock");
 
-        servoLock.setPosition(RELEASE_LOCK);
+        servoLock.setPosition(ValueStore.LOCK_LOAD);
+
+        //Initialize beacon servos
+        servoBeaconShuttle = hardwareMap.servo.get("BeaconShuttle");
+
+        servoBeaconShuttle.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
+
+        servoBeaconTilt = hardwareMap.servo.get("BeaconTilt");
+
+        servoBeaconTilt.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         hardwareMapping();
 
         // Wait for the game to start
         waitForStart();
 
-        controls = new DefaultControls(gamepad1, gamepad2);
+        controls = new SingleControllerControls(gamepad1, gamepad2);
 
         // Go go gadget robot!
         while (opModeIsActive())
         {
             boolean modifierKey = controls.modifierKey();
 
+            //driving
             if (ScaleInput.scale(controls.LTrack()) != 0
                     || ScaleInput.scale(controls.RTrack()) != 0)
                 driveTrain.manualDrive(-controls.LTrack(), -controls.RTrack());
@@ -186,26 +185,6 @@ public class MainTeleop extends LinearOpMode{
                 driveTrain.setRightDrivePower(driveSpeed);
             }
 
-            if (gamepad1.dpad_down)
-            {
-                //not yet implemented
-            }
-
-            if (gamepad1.dpad_left)
-            {
-                //not yet implemented
-            }
-
-            if (gamepad1.dpad_right)
-            {
-                //not yet implemented
-            }
-
-            if (gamepad1.dpad_up)
-            {
-                //not yet implemented
-            }
-
             //turn right
             if (controls.turnRight()) {
                 driveTrain.setLeftDrivePower(-turnSpeed);
@@ -225,10 +204,12 @@ public class MainTeleop extends LinearOpMode{
                 driveTrain.setRightDrivePower(0);
             }
 
-            if (controls.LockPositionButtonPressed())
-                servoLock.setPosition(LOAD_LOCK);
-            else
-                servoLock.setPosition(RELEASE_LOCK);
+            //other components
+            if (controls.LoadPositionButtonPressed())
+                servoLock.setPosition(ValueStore.LOCK_LOAD);
+
+            if (controls.ReleasePositionButtonPressed())
+                servoLock.setPosition(ValueStore.LOCK_RELEASE);
 
             if (controls.HarvesterButtonPressed())
             {
@@ -247,25 +228,21 @@ public class MainTeleop extends LinearOpMode{
                 loadAndLaunch();
             }
 
-            motorShooter.setPower(ScaleInput.scale(controls.ShootOneBall()));
-            if (controls.ShootOneBall() > 0.5)
+            if (ScaleInput.scale(controls.ShootOneBall()) > 0) {
+                motorShooter.setPower(Math.abs(ScaleInput.scale(controls.ShootOneBall())));
+            } else {
+                motorShooter.setPower(0);
+            }
+
+            /*if (controls.ShootOneBall() > 0.5)
             {
                 launchOneBall();
-            }
+            }*/
 
             driveSpeed = roundToOneDec(driveSpeed);
             turnSpeed = roundToOneDec(turnSpeed);
 
-            telemetry.addData("countB", countB);
-            telemetry.addData("countBAlt", countBAlt);
-            telemetry.addData("countX", countX);
-            telemetry.addData("countXAlt", countXAlt);
-            telemetry.addData("Gamepad", gamepad1.toString());
-            telemetry.addData("Turn Speed", turnSpeed);
-            telemetry.addData("Drive Speed", driveSpeed);
-            telemetry.update();
             idle();
-
         }
     }
 
@@ -280,6 +257,12 @@ public class MainTeleop extends LinearOpMode{
         Thread.sleep(1000);
 
         servoLock.setPosition(ValueStore.LOCK_RELEASE);
+
+        Thread.sleep(1000);
+
+        servoLock.setPosition(ValueStore.LOCK_LOAD);
+
+        Thread.sleep(500);
 
         launchOneBall();
     }

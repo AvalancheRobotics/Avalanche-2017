@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.avalanche.enums.TeamColor;
 import org.firstinspires.ftc.avalanche.subsystems.AutoDriveTrainController;
 import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
-import org.firstinspires.ftc.avalanche.controls.DefaultControls;
+import org.firstinspires.ftc.avalanche.controls.SingleControllerControls;
 import org.firstinspires.ftc.avalanche.controls.ControllerConfig;
 
 @TeleOp(name = "Auto DriveToLine Tester", group = "Testing")
@@ -74,7 +74,7 @@ public class AutoDriveToLineTest extends LinearOpMode
         hardwareMapping();
 
         waitForStart();
-        controls = new DefaultControls(gamepad1, gamepad2);
+        controls = new SingleControllerControls(gamepad1, gamepad2);
 
         autoDriveTrain.callAtBeginningOfOpModeAfterInit();
 

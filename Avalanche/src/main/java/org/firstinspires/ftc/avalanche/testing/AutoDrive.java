@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.avalanche.controls.DefaultControls;
+import org.firstinspires.ftc.avalanche.controls.SingleControllerControls;
 import org.firstinspires.ftc.avalanche.enums.TeamColor;
 import org.firstinspires.ftc.avalanche.subsystems.AutoDriveTrainController;
 import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
@@ -61,7 +61,7 @@ public class AutoDrive extends LinearOpMode{
         hardwareMapping();
 
         waitForStart();
-        controls = new DefaultControls(gamepad1, gamepad2);
+        controls = new SingleControllerControls(gamepad1, gamepad2);
 
         autoDriveTrain.callAtBeginningOfOpModeAfterInit();
 

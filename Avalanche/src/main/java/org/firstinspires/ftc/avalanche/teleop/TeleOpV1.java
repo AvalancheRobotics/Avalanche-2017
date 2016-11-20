@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.avalanche.controls.DefaultControls;
+import org.firstinspires.ftc.avalanche.controls.SingleControllerControls;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
@@ -87,7 +87,7 @@ public class TeleOpV1 extends LinearOpMode{
         // Wait for the game to start
         waitForStart();
 
-        controls = new DefaultControls(gamepad1, gamepad2);
+        controls = new SingleControllerControls(gamepad1, gamepad2);
 
         // Go go gadget robot!
         while (opModeIsActive()) {
@@ -139,29 +139,28 @@ public class TeleOpV1 extends LinearOpMode{
                 driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
 
                 if (gamepad1.right_trigger > .7 || gamepad2.right_trigger > .7) {
-                    motorHarvester.setPower(0);
+                    motorHarvester.setPower(0); //stop harvester
                 }
 
                 if (gamepad1.left_bumper || gamepad2.left_bumper) {
-                    motorHarvester.setPower(-1);
+                    motorHarvester.setPower(-1); //go backwards with harvester
                 }
 
                 if (gamepad1.right_bumper || gamepad2.right_bumper) {
-                    motorHarvester.setPower(1);
+                    motorHarvester.setPower(1); //go forward with harvester
                 }
 
                 if (gamepad2.a) {
-                    servoLock.setPosition(ValueStore.LOCK_LOAD);
+                    servoLock.setPosition(ValueStore.LOCK_LOAD); //load
                 }
 
                 if (gamepad2.b) {
-                    servoLock.setPosition(ValueStore.LOCK_RELEASE);
+                    servoLock.setPosition(ValueStore.LOCK_RELEASE); //release
                 }
-
 
                 //Load Lock and Launch Ball
                 if (gamepad2.y) {
-                    loadAndLaunch();
+                    loadAndLaunch(); //launch ball
                 }
 
                 if (ScaleInput.scale(gamepad2.left_trigger) > 0) {

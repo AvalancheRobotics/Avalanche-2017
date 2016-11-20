@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  * Created by Nicholas on 10/23/16.
  */
 
-public class DefaultControls implements ControllerConfig
+public class DoubleControllerControls implements ControllerConfig
 {
     Gamepad gamepad1;
     Gamepad gamepad2;
-    public DefaultControls(Gamepad gamepad1, Gamepad gamepad2) {
+    public DoubleControllerControls(Gamepad gamepad1, Gamepad gamepad2) {
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
     }
@@ -28,12 +28,12 @@ public class DefaultControls implements ControllerConfig
     public boolean reverse() {return gamepad1.a;}
     public boolean forward() {return gamepad1.y;}
     public boolean ReverseHarvesterButtonPressed() {return gamepad2.b;}
-    public boolean LockPositionButtonPressed() {return gamepad2.left_bumper;}
+    public boolean LoadPositionButtonPressed() {return gamepad2.left_bumper;}
+    public boolean ReleasePositionButtonPressed() {return gamepad2.right_bumper;}
     public float ShootOneBall() {return gamepad2.right_trigger;}
     public boolean ExtendButtonPresser() {return gamepad2.right_stick_y > 0.5;}
     public boolean RetractButtonPresser() {return gamepad2.right_stick_y < -0.5;}
     public boolean TiltButtonPresserLeftUp() {return gamepad2.right_stick_x < -0.5;}
     public boolean TiltButtonPresserRightUp() {return gamepad2.right_stick_x > 0.5;}
     public boolean HoldButtonPresserPosition() {return gamepad2.right_stick_button;}
-    public boolean ShooterActivationButtonPressed() {return gamepad2.right_bumper;}
 }

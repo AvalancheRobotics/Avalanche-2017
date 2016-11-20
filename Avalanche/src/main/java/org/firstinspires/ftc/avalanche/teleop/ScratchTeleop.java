@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.avalanche.controls.DefaultControls;
+import org.firstinspires.ftc.avalanche.controls.SingleControllerControls;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftFront;
 import org.firstinspires.ftc.avalanche.hardware.MotorRightBack;
@@ -63,7 +63,7 @@ public class ScratchTeleop extends LinearOpMode{
         // Wait for the game to start
         waitForStart();
 
-        controls = new DefaultControls(gamepad1, gamepad2);
+        controls = new SingleControllerControls(gamepad1, gamepad2);
 
         // Go go gadget robot!
         while (opModeIsActive())
