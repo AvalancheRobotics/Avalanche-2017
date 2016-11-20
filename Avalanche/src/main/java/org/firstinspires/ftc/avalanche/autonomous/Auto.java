@@ -45,7 +45,10 @@ public class Auto extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
-        autoDriveTrain.moveDistanceAtSpeedOnHeading(1, 48.0);        // Drive FWD 48 inches
-        autoDriveTrain.moveDistanceAtSpeedOnHeading(1, -48.0);       // Drive REV 48 inches
+        //autoDriveTrain.moveDistanceAtSpeedOnHeading(1, 48.0);        // Drive FWD 48 inches
+        //autoDriveTrain.moveDistanceAtSpeedOnHeading(1, -48.0);       // Drive REV 48 inches
+
+        //autoDriveTrain.moveDistanceAtSpeedOnHeading(autoDriveTrain.DRIVE_SPEED, 57.0, 45); //Drive FWD 57 inches 45 degrees
+        //autoDriveTrain.moveDistanceAtSpeedOnHeading(autoDriveTrain.DRIVE_SPEED, 35.0, -45); //Drive FWD 35 inches -45 degrees
     }
 }
