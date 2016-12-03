@@ -18,7 +18,6 @@ import org.firstinspires.ftc.avalanche.utilities.ValueStore;
 /**
  * The main Teleop class used for production (competition) purposes.
  *
- * TODO: Implement Button Pressor
  *
  * Created by Nicholas on 11/7/16
  * Edited by Keith on 11/13/16

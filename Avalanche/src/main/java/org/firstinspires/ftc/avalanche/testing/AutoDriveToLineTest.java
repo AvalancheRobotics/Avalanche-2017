@@ -19,7 +19,8 @@ public class AutoDriveToLineTest extends LinearOpMode
 
     private ControllerConfig controls;
     private AutoDriveTrainController autoDriveTrain;
-    ColorSensor colorSensor;
+    ColorSensor lineLeft;
+    ColorSensor lineRight;
     ModernRoboticsI2cGyro gyro;
     DcMotor odometer;
 
@@ -54,12 +55,12 @@ public class AutoDriveToLineTest extends LinearOpMode
 
         teamColor = TeamColor.BLUE;
 
-        colorSensor = hardwareMap.colorSensor.get("ColorSensor");
+        lineLeft = hardwareMap.colorSensor.get("lineLeft");
+        lineRight = hardwareMap.colorSensor.get("lineRight");
         gyro = (ModernRoboticsI2cGyro)(hardwareMap.gyroSensor.get("Gyro"));
-        odometer = hardwareMap.dcMotor.get("Odometer");
         /*beaconPresser = new BeaconPresser(this, teamColor, beaconShuttle, beaconTilt, colorLeft, colorRight);*/
 
-        autoDriveTrain = new AutoDriveTrainController(colorSensor, this, gyro, hardwareMap, odometer);
+        autoDriveTrain = new AutoDriveTrainController(lineLeft, lineRight, this, gyro, hardwareMap, odometer);
 
         distance = 0;
         speed = 0.1;
@@ -82,11 +83,11 @@ public class AutoDriveToLineTest extends LinearOpMode
         while (opModeIsActive()) {
 
             if (gamepad1.y) {
-                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, distance);
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, distance, 0);
             }
 
             if (gamepad1.a) {
-                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -distance);
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -distance, 0);
             }
 
             if (gamepad1.b)
@@ -141,7 +142,7 @@ public class AutoDriveToLineTest extends LinearOpMode
             }
 
             if (gamepad1.start) {
-                lastDrive = autoDriveTrain.driveToLine(10000);
+                lastDrive = autoDriveTrain.driveToLine(10000, true);
             }
 
 

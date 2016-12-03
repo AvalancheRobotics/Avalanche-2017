@@ -15,16 +15,16 @@ public class ValueStore {
     /** Button Presser Values */
 
     //Distance to extend button presser to before reaching beacon
-    public static final double BUTTON_PRESSER_DRIVING = 0.45;
+    public static final double BUTTON_PRESSER_DRIVING = .3;
 
     //Distance to extend button presser to press button
-    public static final double BUTTON_PRESSER_PRESSED = 0.6;
+    public static final double BUTTON_PRESSER_PRESSED = .9228;
 
     //Button presser's stowed position
-    public static final double BUTTON_PRESSER_RETRACTED = 0.3;
+    public static final double BUTTON_PRESSER_RETRACTED = 0.105;
 
     //Distance to extend button presser to measure colors
-    public static final double BUTTON_PRESSER_MEASURE = .55;
+    public static final double BUTTON_PRESSER_MEASURE = .76;
 
     //Button presser's stowed angle
     public static final double BUTTON_PRESSER_STORE_ANGLE = 0.55;
