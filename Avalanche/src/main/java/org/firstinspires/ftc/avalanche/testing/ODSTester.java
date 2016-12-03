@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.avalanche.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
@@ -39,6 +40,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
  * color sensor as line detector
 **/
 @TeleOp(name = "ODS Tester", group = "Testing")
+@Disabled
 public class ODSTester extends LinearOpMode {
 
     OpticalDistanceSensor odsSensor;  // Hardware Device Object

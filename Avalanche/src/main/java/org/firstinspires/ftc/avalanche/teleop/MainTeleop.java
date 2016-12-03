@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.avalanche.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.avalanche.utilities.ValueStore;
  * Edited by Keith on 11/13/16
  */
 @TeleOp(name = "Main Teleop", group = "TeleOp")
+@Disabled
 public class MainTeleop extends LinearOpMode{
 
     private ControllerConfig controls;

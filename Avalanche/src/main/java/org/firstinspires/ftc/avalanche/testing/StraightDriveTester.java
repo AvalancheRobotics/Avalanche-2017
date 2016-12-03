@@ -4,6 +4,7 @@ package org.firstinspires.ftc.avalanche.testing;
 import android.media.MediaPlayer;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +16,9 @@ import org.firstinspires.ftc.avalanche.hardware.MotorRightFront;
 import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 
 @TeleOp(name = "Straight Drive Tester", group = "Testing")
+@Disabled
 public class StraightDriveTester extends LinearOpMode {
+
 
 
     DcMotor odometer;

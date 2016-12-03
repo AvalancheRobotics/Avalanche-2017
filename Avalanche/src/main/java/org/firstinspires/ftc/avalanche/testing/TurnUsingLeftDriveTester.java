@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.avalanche.testing;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.avalanche.controls.SingleControllerControls;
 import org.firstinspires.ftc.avalanche.controls.ControllerConfig;
 
 @TeleOp(name = "TurnUsingLeftDrive", group = "Testing")
+@Disabled
 public class TurnUsingLeftDriveTester extends LinearOpMode
 {
     private ControllerConfig controls;

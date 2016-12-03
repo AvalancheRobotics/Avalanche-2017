@@ -2,6 +2,7 @@ package org.firstinspires.ftc.avalanche.teleop;
 
 import android.media.MediaPlayer;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
  * @author Keith
  */
 @TeleOp(name = "Scratch Teleop", group = "TeleOp")
+@Disabled
 public class ScratchTeleop extends LinearOpMode{
 
     private ControllerConfig controls;

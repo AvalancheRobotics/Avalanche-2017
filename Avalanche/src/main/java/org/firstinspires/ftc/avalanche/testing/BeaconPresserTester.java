@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.avalanche.testing;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
  */
 
 @TeleOp (name = "Beacon Presser Tester", group = "Utilities")
+@Disabled
 public class BeaconPresserTester extends LinearOpMode {
 
     Servo beaconShuttle;
