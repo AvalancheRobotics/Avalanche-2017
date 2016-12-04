@@ -16,7 +16,6 @@ import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
  */
 
 @TeleOp (name = "Beacon Presser Tester", group = "Utilities")
-@Disabled
 public class BeaconPresserTester extends LinearOpMode {
 
     Servo beaconShuttle;
@@ -52,7 +51,7 @@ public class BeaconPresserTester extends LinearOpMode {
             }
 
             if (gamepad1.b) {
-                beaconPresser.startButtonPress(8000, 3);
+             beaconPresser.startButtonPress(8000, 50, hardwareMap.touchSensor.get("touchSensor"));
             }
 
             if (gamepad1.y) {

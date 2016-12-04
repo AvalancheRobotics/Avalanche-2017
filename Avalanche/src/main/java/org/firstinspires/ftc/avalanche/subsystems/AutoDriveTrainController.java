@@ -163,7 +163,7 @@ public class AutoDriveTrainController {
 
         while (linearOpMode.opModeIsActive() && !ColorReader.isWhite(initLightLeft,
                 lineLeft.red() + lineLeft.green() + lineLeft.blue())
-                && ColorReader.isWhite(initLightRight,
+                && !ColorReader.isWhite(initLightRight,
                 lineRight.red() + lineRight.green() + lineRight.blue())
                 && !timeout) {
             // If true this means that we timed out before we detected the white tape, therefore we're not on white.
@@ -183,7 +183,7 @@ public class AutoDriveTrainController {
     }
 
     //Returns corrected gyro angle
-    private int getCorrectedHeading() {
+    public int getCorrectedHeading() {
         double elapsedSeconds = (System.nanoTime() - startTime) / 1000000000.0;
         int totalDrift = (int) (elapsedSeconds / 5 * drift);
         int targetHeading = gyro.getIntegratedZValue() - offset - totalDrift;
@@ -228,6 +228,7 @@ public class AutoDriveTrainController {
                 driveTrain.setTargetPosition(2, odometerTicksToWheelTicks + driveTrain.getEncoderValue(2));
                 driveTrain.setTargetPosition(3, odometerTicksToWheelTicks + driveTrain.getEncoderValue(3));
 
+                /*
                 linearOpMode.telemetry.addData("leftSpeed", driveTrain.getPower(0));
                 linearOpMode.telemetry.addData("rightSpeed", driveTrain.getPower(1));
                 linearOpMode.telemetry.addData("o2wticks", odometerTicksToWheelTicks);
@@ -238,7 +239,74 @@ public class AutoDriveTrainController {
 
 
                 linearOpMode.telemetry.update();
+*/
 
+                linearOpMode.idle();
+            }
+
+        }
+
+        // Stop all motion;
+        driveTrain.setPower(0);
+    }
+
+    public void moveDistanceAtSpeedOnHeadingFloat(double distance, int heading) throws InterruptedException {
+
+        // Ensure that the opmode is still active
+        if (linearOpMode.opModeIsActive()) {
+
+
+            driveTrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            driveTrain.setZeroPowerBehavior(false);
+
+            int distanceInOdometerTicks = (int) ((distance - .5) * COUNTS_PER_INCH_ODOMETER); //SUBTRACT .5 inches because robot has tendency to overshoot.
+
+            int odometerTarget = (odometer.getCurrentPosition() - distanceInOdometerTicks * ODOMETER_INVERSED);
+
+            int odometerCurrentPosition = odometer.getCurrentPosition();
+
+            odometer.setTargetPosition(odometerTarget);
+
+            driveTrain.setLeftDrivePower(getPower(distance, .1, 1, 1, 0));
+            driveTrain.setRightDrivePower(getPower(distance, .1, 1, 1, 0));
+
+            int drivingBackwards = 1;
+
+            if (distance < 0) {
+                drivingBackwards = -1;
+            }
+
+            while (drivingBackwards * odometerTarget > drivingBackwards * odometerCurrentPosition) {
+                int distanceLeft = odometerTarget - odometerCurrentPosition;
+                odometerCurrentPosition = odometer.getCurrentPosition();
+
+                int odometerTicksToWheelTicks;
+                odometerTicksToWheelTicks = (int) (distanceLeft / COUNTS_PER_INCH_ODOMETER * COUNTS_PER_INCH_DRIVE_WHEEL);
+
+
+                double steer = (heading - getCorrectedHeading()) * P_TURN_COEFF;
+
+                driveTrain.setLeftDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER, .035, 1, 1, -steer));
+                driveTrain.setRightDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER, .035, 1, 1, steer));
+
+                driveTrain.setTargetPosition(0, odometerTicksToWheelTicks + driveTrain.getEncoderValue(0));
+                driveTrain.setTargetPosition(1, odometerTicksToWheelTicks + driveTrain.getEncoderValue(1));
+                driveTrain.setTargetPosition(2, odometerTicksToWheelTicks + driveTrain.getEncoderValue(2));
+                driveTrain.setTargetPosition(3, odometerTicksToWheelTicks + driveTrain.getEncoderValue(3));
+
+                /*
+                linearOpMode.telemetry.addData("leftSpeed", driveTrain.getPower(0));
+                linearOpMode.telemetry.addData("rightSpeed", driveTrain.getPower(1));
+                linearOpMode.telemetry.addData("o2wticks", odometerTicksToWheelTicks);
+                linearOpMode.telemetry.addData("otleft", distanceLeft);
+                linearOpMode.telemetry.addData("odomTarget", odometerTarget);
+                linearOpMode.telemetry.addData("odomCurrent", odometerCurrentPosition);
+                linearOpMode.telemetry.addData("heading", getCorrectedHeading());
+
+
+                linearOpMode.telemetry.update();
+*/
 
                 linearOpMode.idle();
             }
@@ -268,32 +336,32 @@ public class AutoDriveTrainController {
 
         power = (power * negative) + (steer * Math.abs(power));
 
-        linearOpMode.telemetry.addData("steer", steer * Math.abs(power));
+        //linearOpMode.telemetry.addData("steer", steer * Math.abs(power));
 
 
         return power;
     }
 
-    public void pivotToAngle(int angle, double speed) throws InterruptedException {
+    public void pivotToAngle(int angle, double speed, double porpConstant, double floor, double accuracy, int timeout) throws InterruptedException {
 
         driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int heading = getCorrectedHeading();
 
         double power;
-        double proportionalConst = 0.004;
+        double proportionalConst = porpConstant;
 
         double topCeiling = speed;
         double bottomCeiling = -speed;
-        double topFloor = .07;
-        double bottomFloor = -.07;
+        double topFloor = floor;
+        double bottomFloor = -floor;
 
         int target = angle;
 
 
-        while (!(heading > target - 2 && heading < target + 2) && linearOpMode.opModeIsActive()) {
+        long timeForStop = System.currentTimeMillis() + timeout;
 
-            long currentTime = System.currentTimeMillis();
+        while (!(heading >= target - accuracy && heading <= target + accuracy) && timeForStop > System.currentTimeMillis() && linearOpMode.opModeIsActive()) {
 
             power = Math.abs((target - heading) * proportionalConst);
 
@@ -310,17 +378,78 @@ public class AutoDriveTrainController {
                 driveTrain.setLeftDrivePower(-power);
                 driveTrain.setRightDrivePower(power);
 
-                linearOpMode.telemetry.addData("turn", "turn left");
-                linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
+                //linearOpMode.telemetry.addData("turn", "turn left");
+                //linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
             } else {
                 driveTrain.setLeftDrivePower(power);
                 driveTrain.setRightDrivePower(-power);
 
-                linearOpMode.telemetry.addData("turn", "turn right");
-                linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
+                //linearOpMode.telemetry.addData("turn", "turn right");
+                //linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
             }
 
-            linearOpMode.telemetry.update();
+            //linearOpMode.telemetry.update();
+
+            heading = getCorrectedHeading();
+
+
+            linearOpMode.idle();
+
+        }
+
+        driveTrain.setLeftDrivePower(0);
+        driveTrain.setRightDrivePower(0);
+
+    }
+
+    public void pivotToAngle(int angle, double speed) throws InterruptedException {
+
+        driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int heading = getCorrectedHeading();
+
+        double power;
+        double proportionalConst = 0.003;
+
+        double topCeiling = speed;
+        double bottomCeiling = -speed;
+        double topFloor = .05;
+        double bottomFloor = -.05;
+
+        int target = angle;
+
+        long startT = System.currentTimeMillis();
+
+
+        while (!(heading >= target - 1 && heading <= target + 1) && linearOpMode.opModeIsActive() && startT + 6500 > System.currentTimeMillis()) {
+
+
+            power = Math.abs((target - heading) * proportionalConst);
+
+            if (power > topCeiling)
+                power = topCeiling;
+            else if (power < bottomCeiling)
+                power = bottomCeiling;
+            else if (power < topFloor && power > 0)
+                power = topFloor;
+            else if (power > bottomFloor && power < 0)
+                power = bottomFloor;
+
+            if (target > heading) {
+                driveTrain.setLeftDrivePower(-power);
+                driveTrain.setRightDrivePower(power);
+
+                //linearOpMode.telemetry.addData("turn", "turn left");
+                //linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
+            } else {
+                driveTrain.setLeftDrivePower(power);
+                driveTrain.setRightDrivePower(-power);
+
+                //linearOpMode.telemetry.addData("turn", "turn right");
+                //linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
+            }
+
+            //linearOpMode.telemetry.update();
 
             heading = getCorrectedHeading();
 
@@ -369,17 +498,17 @@ public class AutoDriveTrainController {
                 driveTrain.setLeftDrivePower(0);
                 driveTrain.setRightDrivePower(power);
 
-                linearOpMode.telemetry.addData("turn", "turn left");
-                linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
+                //linearOpMode.telemetry.addData("turn", "turn left");
+                //linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
             } else {
                 driveTrain.setLeftDrivePower(power);
                 driveTrain.setRightDrivePower(0);
 
-                linearOpMode.telemetry.addData("turn", "turn right");
-                linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
+                //linearOpMode.telemetry.addData("turn", "turn right");
+                //linearOpMode.telemetry.addData("corrected heading", getCorrectedHeading());
             }
 
-            linearOpMode.telemetry.update();
+            //linearOpMode.telemetry.update();
 
             heading = getCorrectedHeading();
 
@@ -414,11 +543,11 @@ public class AutoDriveTrainController {
 
         while (startTimeOne > System.currentTimeMillis() && (ColorReader.isWhite(initLightRight, lineRight.red() + lineRight.green() + lineRight.blue()) && ColorReader.isWhite(initLightLeft, lineLeft.red() + lineLeft.green() + lineLeft.blue()))) {
             linearOpMode.idle();
-            linearOpMode.telemetry.addData("1", ColorReader.isWhite(initLightRight, lineRight.red() + lineRight.green() + lineRight.blue()));
-            linearOpMode.telemetry.addData("1", ColorReader.isWhite(initLightLeft, lineLeft.red() + lineLeft.green() + lineLeft.blue()));
-            linearOpMode.telemetry.addData("1", lineRight.red() + lineRight.green() + lineRight.blue());
-            linearOpMode.telemetry.addData("1", lineLeft.red() + lineLeft.green() + lineLeft.blue());
-            linearOpMode.telemetry.update();
+            //linearOpMode.telemetry.addData("1", ColorReader.isWhite(initLightRight, lineRight.red() + lineRight.green() + lineRight.blue()));
+            //linearOpMode.telemetry.addData("1", ColorReader.isWhite(initLightLeft, lineLeft.red() + lineLeft.green() + lineLeft.blue()));
+            //linearOpMode.telemetry.addData("1", lineRight.red() + lineRight.green() + lineRight.blue());
+            //linearOpMode.telemetry.addData("1", lineLeft.red() + lineLeft.green() + lineLeft.blue());
+            //linearOpMode.telemetry.update();
         }
 
         linearOpMode.telemetry.addData("throughFirstLoop", "2");
@@ -540,7 +669,7 @@ public class AutoDriveTrainController {
 
             int head2 = getCorrectedHeading();
 
-            pivotToAngle((head1 + head2) /2, .1);
+            pivotToAngle((head1 + head2) / 2, .1);
 
             driveTrain.setLeftDrivePower(0);
             driveTrain.setRightDrivePower(0);
@@ -620,7 +749,7 @@ public class AutoDriveTrainController {
 
             int head2 = getCorrectedHeading();
 
-            pivotToAngle((head1 + head2)/2, .1);
+            pivotToAngle((head1 + head2) / 2, .1);
 
 
         }
