@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.avalanche.testing;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -50,7 +51,7 @@ public class BeaconPresserTester extends LinearOpMode {
             }
 
             if (gamepad1.b) {
-                beaconPresser.startButtonPress(8000, 3);
+             beaconPresser.startButtonPress(8000, 50, hardwareMap.touchSensor.get("touchSensor"));
             }
 
             if (gamepad1.y) {

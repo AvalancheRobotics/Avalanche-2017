@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.avalanche.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,12 +19,12 @@ import org.firstinspires.ftc.avalanche.utilities.ValueStore;
 /**
  * The main Teleop class used for production (competition) purposes.
  *
- * TODO: Implement Button Pressor
  *
  * Created by Nicholas on 11/7/16
  * Edited by Keith on 11/13/16
  */
 @TeleOp(name = "Main Teleop", group = "TeleOp")
+@Disabled
 public class MainTeleop extends LinearOpMode{
 
     private ControllerConfig controls;

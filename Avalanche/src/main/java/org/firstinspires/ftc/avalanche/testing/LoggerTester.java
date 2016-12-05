@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.avalanche.testing;
 
 import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.avalanche.utilities.Logger;
  * @author Keith
  */
 @TeleOp(name = "Logger Tester", group = "Testing")
+@Disabled
 public class LoggerTester extends LinearOpMode {
 
     Logger logger;

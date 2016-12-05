@@ -2,6 +2,7 @@ package org.firstinspires.ftc.avalanche.education;
 
 import android.media.MediaPlayer;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.avalanche.subsystems.DriveTrainController;
 import org.firstinspires.ftc.avalanche.utilities.ScaleInput;
 
 @TeleOp(name = "David First Teleop", group = "Education")
+@Disabled
 public class DavidFirstTeleOp extends LinearOpMode {
 
     private DcMotor motorLeftFront;

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.avalanche.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * Created by Austin on 9/13/2016.
  */
 @TeleOp(name = "Flywheel Tester", group = "Testing")
+@Disabled
 public class FlywheelTester extends LinearOpMode {
 
     DcMotor motor;

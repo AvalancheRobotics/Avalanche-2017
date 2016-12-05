@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.avalanche.testing;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -14,11 +15,13 @@ import org.firstinspires.ftc.avalanche.controls.SingleControllerControls;
 import org.firstinspires.ftc.avalanche.controls.ControllerConfig;
 
 @TeleOp(name = "TurnUsingLeftDrive", group = "Testing")
+@Disabled
 public class TurnUsingLeftDriveTester extends LinearOpMode
 {
     private ControllerConfig controls;
     private AutoDriveTrainController autoDriveTrain;
-    ColorSensor colorSensor;
+    ColorSensor lineLeft;
+    ColorSensor lineRight;
     ModernRoboticsI2cGyro gyro;
     DcMotor odometer;
 
@@ -53,12 +56,14 @@ public class TurnUsingLeftDriveTester extends LinearOpMode
 
         teamColor = TeamColor.BLUE;
 
-        colorSensor = hardwareMap.colorSensor.get("ColorSensor");
+        lineLeft = hardwareMap.colorSensor.get("lineLeft");
+        lineRight = hardwareMap.colorSensor.get("lineRight");
+
         gyro = (ModernRoboticsI2cGyro)(hardwareMap.gyroSensor.get("Gyro"));
         odometer = hardwareMap.dcMotor.get("Odometer");
         /*beaconPresser = new BeaconPresser(this, teamColor, beaconShuttle, beaconTilt, colorLeft, colorRight);*/
 
-        autoDriveTrain = new AutoDriveTrainController(colorSensor, this, gyro, hardwareMap, odometer);
+        autoDriveTrain = new AutoDriveTrainController(lineLeft, lineRight, this, gyro, hardwareMap, odometer);
 
         distance = 0;
         speed = 0.4;
@@ -88,22 +93,22 @@ public class TurnUsingLeftDriveTester extends LinearOpMode
 
             if (gamepad1.y)
             {
-                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, distance, gyro.getHeading());
             }
 
             if (gamepad1.a)
             {
-                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -distance, autoDriveTrain.getCorrectedHeading());
+                autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -distance, gyro.getHeading());
             }
 
             if (gamepad1.b)
             {
-                autoDriveTrain.turnUsingLeftDrive(90, speed, 100000);
+                autoDriveTrain.turnUsingOneSide(90, speed);
             }
 
             if (gamepad1.x)
             {
-                autoDriveTrain.turnUsingLeftDrive(-90, speed, 100000);
+                autoDriveTrain.turnUsingOneSide(-90, speed);
             }
 
             if (gamepad1.dpad_right)
@@ -141,7 +146,7 @@ public class TurnUsingLeftDriveTester extends LinearOpMode
 
             if (gamepad1.start)
             {
-                lastDrive = autoDriveTrain.driveToLine(speed, 100000);
+                lastDrive = autoDriveTrain.driveToLine(speed, true);
             }
 
             telemetry.addData("Speed", speed);

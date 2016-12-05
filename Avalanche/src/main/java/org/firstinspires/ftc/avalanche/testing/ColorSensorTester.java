@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.avalanche.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.avalanche.utilities.ColorReader;
  * Change by Austin on 9/17/2016: Modified ColorSensorTester to work with and test new algorithms
  */
 @TeleOp(name = "Color Sensor Tester", group = "Testing")
+@Disabled
 public class ColorSensorTester extends LinearOpMode {
 
     ColorSensor colorSensorBeacon;

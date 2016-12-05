@@ -3,6 +3,7 @@ package org.firstinspires.ftc.avalanche.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.avalanche.enums.BeaconState;
 import org.firstinspires.ftc.avalanche.enums.TeamColor;
@@ -56,6 +57,123 @@ public class BeaconPresser {
     public void setPresserToDrivePosition() {
         extendServo.setPosition(ValueStore.BUTTON_PRESSER_DRIVING);
     }
+
+
+    public void startButtonPress(int timeoutMilliseconds, long redundancy, TouchSensor touchSensor) throws InterruptedException {
+        // Begin extending presser
+        extendServo.setPosition(ValueStore.BUTTON_PRESSER_MEASURE);
+
+
+        // Figure out what the current beacon state is.
+        // If the robot can't figure it out in time, the robot quits and moves on.
+        long startTime = System.currentTimeMillis();
+
+        BeaconState currentState = beaconState(redundancy);
+
+        while (currentState.equals(BeaconState.UNDECIDED) && (System.currentTimeMillis() - startTime) < timeoutMilliseconds && !touchSensor.isPressed()) {
+            currentState = beaconState(redundancy);
+            operation.idle();
+        }
+
+        if (currentState.equals(BeaconState.UNDECIDED)) {
+            selectorServo.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
+            extendServo.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
+            return;
+        }
+
+
+        // After you figure out the beacon state
+        // move in to press the button and
+        // tilt the selector servo to hit the button you want.
+        if (teamColor.equals(TeamColor.RED)) {
+            if (currentState.equals(BeaconState.BLUE_LEFT_BLUE_RIGHT) || currentState.equals(BeaconState.BLUE_LEFT_RED_RIGHT)) {
+                selectorServo.setPosition(ValueStore.BUTTON_PRESSER_RIGHT_ANGLE);
+            } else if (currentState.equals(BeaconState.RED_LEFT_BLUE_RIGHT)) {
+                selectorServo.setPosition(ValueStore.BUTTON_PRESSER_LEFT_ANGLE);
+            }
+        } else {
+            if (currentState.equals(BeaconState.RED_LEFT_RED_RIGHT) || currentState.equals(BeaconState.RED_LEFT_BLUE_RIGHT)) {
+                selectorServo.setPosition(ValueStore.BUTTON_PRESSER_RIGHT_ANGLE);
+            } else if (currentState.equals(BeaconState.BLUE_LEFT_RED_RIGHT)) {
+                selectorServo.setPosition(ValueStore.BUTTON_PRESSER_LEFT_ANGLE);
+            }
+        }
+
+        extendServo.setPosition(ValueStore.BUTTON_PRESSER_PRESSED);
+
+
+        // Wait for the colors change,
+        // if the colors change as desired, the robot quits and moves on.
+        while ((System.currentTimeMillis() - startTime) < timeoutMilliseconds && !touchSensor.isPressed()) {
+            BeaconState curState = beaconState(redundancy);
+
+            if (teamColor.equals(TeamColor.RED) && curState.equals(BeaconState.RED_LEFT_RED_RIGHT)) {
+                selectorServo.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
+                extendServo.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
+                return;
+            } else if (curState.equals(BeaconState.BLUE_LEFT_BLUE_RIGHT)) {
+                selectorServo.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
+                extendServo.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
+                return;
+            }
+            operation.idle();
+        }
+
+
+        // If the robot simply missed the button, there's not much we can do.
+        // In this scenario, until we can figure out a better approach, we give up and move on.
+        if (teamColor.equals(TeamColor.RED)) {
+            if (!beaconState(redundancy).equals(BeaconState.BLUE_LEFT_BLUE_RIGHT)) {
+                selectorServo.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
+                extendServo.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
+                return;
+            }
+        } else {
+            if (!beaconState(redundancy).equals(BeaconState.RED_LEFT_RED_RIGHT)) {
+                selectorServo.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
+                extendServo.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
+                return;
+            }
+        }
+
+
+        // If the robot didn't miss the button, and we simply pressed the button too quickly after
+        // our alliance partner selected the wrong color,
+        // wait a bit longer and attempt to press again.
+        // Depending on what we set as our timeout, this code may be completely unnecessary.
+        // However if it's unnecessary it won't impact performance so we'll keep it here anyways
+        // to cover all cases.
+        extendServo.setPosition(ValueStore.BUTTON_PRESSER_MEASURE);
+
+        // Just in case we missed the button on the first try, we'll try to press the other side
+        // since in this case we can hit either button.
+        if (selectorServo.getPosition() == ValueStore.BUTTON_PRESSER_RIGHT_ANGLE) {
+            selectorServo.setPosition(ValueStore.BUTTON_PRESSER_LEFT_ANGLE);
+        } else {
+            selectorServo.setPosition(ValueStore.BUTTON_PRESSER_RIGHT_ANGLE);
+        }
+
+        int remainingTimeoutMillis = 5000 - timeoutMilliseconds;
+
+        long startTimeTwo = System.currentTimeMillis();
+
+        while (remainingTimeoutMillis > (System.currentTimeMillis() - startTimeTwo)) {
+            operation.idle();
+        }
+
+        extendServo.setPosition(ValueStore.BUTTON_PRESSER_PRESSED);
+
+
+        long startTimeThree = System.currentTimeMillis();
+        while (ValueStore.TIME_TO_BUTTON_PRESS_FROM_MEASURE_DISTANCE_MILLIS > (System.currentTimeMillis() - startTimeThree)) {
+            operation.idle();
+        }
+
+        extendServo.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
+        selectorServo.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
+
+    }
+
 
     public void startButtonPress(int timeoutMilliseconds, long redundancy) throws InterruptedException {
         // Begin extending presser
@@ -171,6 +289,7 @@ public class BeaconPresser {
         selectorServo.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
 
     }
+
 
 
     // Returns the state of the beacon.

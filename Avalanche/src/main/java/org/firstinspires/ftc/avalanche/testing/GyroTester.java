@@ -3,6 +3,7 @@ package org.firstinspires.ftc.avalanche.testing;
 import android.media.MediaPlayer;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.avalanche.R;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.avalanche.R;
  * Created by Austin on 9/13/2016.
  */
 @TeleOp(name = "Gyro Tester", group = "Testing")
+@Disabled
 public class GyroTester extends LinearOpMode {
 
     ModernRoboticsI2cGyro gyro;

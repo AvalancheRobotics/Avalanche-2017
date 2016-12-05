@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.avalanche.education;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "Cole's First Teleop", group = "Education")
+@Disabled
 public class ColeFirstTeleOp extends LinearOpMode {
 
     private DcMotor motorLeftFront;
