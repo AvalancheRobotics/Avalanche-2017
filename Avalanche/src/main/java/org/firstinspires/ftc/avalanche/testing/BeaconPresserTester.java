@@ -28,13 +28,13 @@ public class BeaconPresserTester extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        beaconShuttle = hardwareMap.servo.get("beaconShuttle");
-        beaconTilt = hardwareMap.servo.get("beaconTilt");
+        beaconShuttle = hardwareMap.servo.get("BeaconShuttle");
+        beaconTilt = hardwareMap.servo.get("BeaconTilt");
         colorLeft = hardwareMap.colorSensor.get("colorLeft");
         colorRight = hardwareMap.colorSensor.get("colorRight");
 
-        colorLeft.setI2cAddress(new I2cAddr(0x03c/2));
-        colorRight.setI2cAddress(new I2cAddr(0x04c/2));
+        colorLeft.setI2cAddress(new I2cAddr(0x6c / 2));
+        colorRight.setI2cAddress(new I2cAddr(0x4c / 2));
 
         colorRight.enableLed(false);
         colorLeft.enableLed(false);
@@ -51,7 +51,7 @@ public class BeaconPresserTester extends LinearOpMode {
             }
 
             if (gamepad1.b) {
-             beaconPresser.startButtonPress(8000, 50, hardwareMap.touchSensor.get("touchSensor"));
+                beaconPresser.startButtonPress(4750, 0);
             }
 
             if (gamepad1.y) {

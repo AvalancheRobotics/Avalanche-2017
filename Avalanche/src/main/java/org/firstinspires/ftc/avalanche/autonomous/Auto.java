@@ -20,10 +20,10 @@ import org.firstinspires.ftc.avalanche.utilities.ValueStore;
  * @author Keith
  */
 
-@Autonomous(name = "Auto", group = "Autonomous")
+@Autonomous(name = "AutoRed", group = "Autonomous")
 public class Auto extends LinearOpMode {
 
-    private static TeamColor teamColor = TeamColor.BLUE;
+    private static TeamColor teamColor = TeamColor.RED;
 
     private AutoDriveTrainController autoDriveTrain;
     ColorSensor lineLeft;
@@ -99,18 +99,82 @@ public class Auto extends LinearOpMode {
         if (teamColor.equals(TeamColor.RED)) {
 
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 10, 0);
+            autoDriveTrain.pivotToAngle(57, .6);
+            autoDriveTrain.moveDistanceAtSpeedOnHeadingFloat(43, 57, 1000);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, -3, 57);
+            autoDriveTrain.pivotToAngle(0, .1);
+            beaconPresser.setPresserToDrivePosition();
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 5, 0);
+            autoDriveTrain.driveToLine(6000, true);
+            autoDriveTrain.pivotToAngle(0, .1);
+            beaconPresser.startButtonPress(5000, 0);
+            beaconPresser.setPresserToDrivePosition();
+            Thread.sleep(1000);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 42, 0);
+            autoDriveTrain.driveToLine(6000, true);
+            autoDriveTrain.pivotToAngle(0, .1);
+            beaconPresser.startButtonPress(5000, 0);
+            beaconPresser.setPresserToDrivePosition();
+
+            autoDriveTrain.pivotToAngle(37, .6);
+
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.7, -25, 37);
+
+            launchOneBall();
+
+            loadAndLaunch();
+
+            autoDriveTrain.pivotToAngle(50, .6);
+
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -25, 50);
+        } else {
+
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -10, 0);
+            autoDriveTrain.pivotToAngle(-57, .6);
+            autoDriveTrain.moveDistanceAtSpeedOnHeadingFloat(-45, -57, 1000);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, 3, -57);
+            autoDriveTrain.pivotToAngle(0, .1);
+            beaconPresser.setPresserToDrivePosition();
+            autoDriveTrain.driveToLine(6000, false);
+            autoDriveTrain.pivotToAngle(0, .1);
+            beaconPresser.startButtonPress(5000, 0);
+            Thread.sleep(1000);
+            beaconPresser.setPresserToDrivePosition();
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.5, -38, 0);
+            autoDriveTrain.driveToLine(6000, false);
+            autoDriveTrain.pivotToAngle(0, .1);
+            beaconPresser.startButtonPress(5000, 0);
+            beaconPresser.setPresserToDrivePosition();
+
+            autoDriveTrain.pivotToAngle(127, .6);
+
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.7, -27, 127);
+
+            launchOneBall();
+
+            loadAndLaunch();
+
+            autoDriveTrain.pivotToAngle(140, .6);
+
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -28, 140);
+        }
+
+
+       /* if (teamColor.equals(TeamColor.RED)) {
+
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 10, 0);
             autoDriveTrain.pivotToAngle(62, .6);
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 55, 61);
             autoDriveTrain.pivotToAngle(0, .6);
             beaconPresser.setPresserToDrivePosition();
             autoDriveTrain.driveToLine(6000, true);
-            // autoDriveTrain.pivotToAngle(0, .1);
-            beaconPresser.startButtonPress(8000, 50);
+            autoDriveTrain.pivotToAngle(0, .1);
+            beaconPresser.startButtonPress(4000, 50);
             beaconPresser.setPresserToDrivePosition();
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.5, 38, 0);
             autoDriveTrain.driveToLine(6000, true);
-            //autoDriveTrain.pivotToAngle(0, .1);
-            beaconPresser.startButtonPress(8000, 50);
+            autoDriveTrain.pivotToAngle(0, .1);
+            beaconPresser.startButtonPress(4000, 50);
             beaconPresser.setPresserToDrivePosition();
 
             autoDriveTrain.pivotToAngle(37, .6);
@@ -154,80 +218,9 @@ public class Auto extends LinearOpMode {
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -28, 140);
         }
 
-
-
-/* TOO SLOW - DOESN'T GET PAST BUTTON PRESSING
-        if (teamColor.equals(TeamColor.RED)) {
-
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 10, 0);
-            autoDriveTrain.pivotToAngle(61, .6);
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 52.5, 61);
-            autoDriveTrain.pivotToAngle(0, .1);
-            beaconPresser.setPresserToDrivePosition();
-            autoDriveTrain.driveToLine(6000, true);
-            autoDriveTrain.pivotToAngle(0, .1);
-            //beaconPresser.startButtonPress(8000, 0);
-            beaconPresser.setPresserToDrivePosition();
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, 36, 0);
-            autoDriveTrain.driveToLine(6000, true);
-            autoDriveTrain.pivotToAngle(0, .1);
-            //beaconPresser.startButtonPress(8000, 0);
-            beaconPresser.setPresserToDrivePosition();
-
-            autoDriveTrain.pivotToAngle(37, .4);
-
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, -30, 37);
-
-            launchOneBall();
-
-            loadAndLaunch();
-
-            autoDriveTrain.pivotToAngle(50, .4);
-
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.4, -30, 50);
-        } else {
-
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -10, 0);
-            autoDriveTrain.pivotToAngle(-61, .6);
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -52.5, -61);
-            autoDriveTrain.pivotToAngle(0, .1);
-            beaconPresser.setPresserToDrivePosition();
-            autoDriveTrain.driveToLine(6000, false);
-            autoDriveTrain.pivotToAngle(0, .1);
-            //beaconPresser.startButtonPress(8000, 3);
-            beaconPresser.setPresserToDrivePosition();
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, -36, 0);
-            autoDriveTrain.driveToLine(6000, false);
-            autoDriveTrain.pivotToAngle(0, .1);
-            //beaconPresser.startButtonPress(8000, 3);
-            beaconPresser.setPresserToDrivePosition();
-
-            autoDriveTrain.pivotToAngle(127, .4);
-
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, -30, 127);
-
-            launchOneBall();
-
-            loadAndLaunch();
-
-            autoDriveTrain.pivotToAngle(140, .4);
-
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.4, -30, 140);
-        }
-
         */
 
-
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        // Put a hold after each turn
-        //autoDriveTrain.moveDistanceAtSpeedOnHeading(1, 48.0);        // Drive FWD 48 inches
-        //autoDriveTrain.moveDistanceAtSpeedOnHeading(1, -48.0);       // Drive REV 48 inches
-
-        //autoDriveTrain.moveDistanceAtSpeedOnHeading(autoDriveTrain.DRIVE_SPEED, 57.0, 45); //Drive FWD 57 inches 45 degrees
-        //autoDriveTrain.moveDistanceAtSpeedOnHeading(autoDriveTrain.DRIVE_SPEED, 35.0, -45); //Drive FWD 35 inches -45 degrees
     }
-
 
     private void loadAndLaunch() throws InterruptedException {
         servoLock.setPosition(ValueStore.LOCK_RELEASE);
@@ -239,7 +232,6 @@ public class Auto extends LinearOpMode {
         Thread.sleep(750);
 
         launchOneBall();
-        ServoController controller = hardwareMap.servoController.get("servos");
     }
 
 
