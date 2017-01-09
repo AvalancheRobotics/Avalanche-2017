@@ -91,9 +91,7 @@ public class AutoShootAndRun extends LinearOpMode {
         Thread.sleep(1000);
         loadAndLaunch();
         Thread.sleep(3000);
-        autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -25.73, 0);
-        autoDriveTrain.pivotToAngle(50, .4);
-        autoDriveTrain.moveDistanceAtSpeedOnHeading(.4, -6, 50);
+        autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -29, 0);
 
         }
 

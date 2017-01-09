@@ -15,7 +15,7 @@ public class ValueStore {
     /** Button Presser Values */
 
     //Distance to extend button presser to before reaching beacon
-    public static final double BUTTON_PRESSER_DRIVING = .20;
+    public static final double BUTTON_PRESSER_DRIVING = .55;
 
     //Distance to extend button presser to press button
     public static final double BUTTON_PRESSER_PRESSED = .9228;

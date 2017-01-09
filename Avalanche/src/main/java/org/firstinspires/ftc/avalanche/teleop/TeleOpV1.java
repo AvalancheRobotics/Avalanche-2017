@@ -95,9 +95,6 @@ public class TeleOpV1 extends LinearOpMode {
                 driveTrain.manualDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
             } else {
 
-                telemetry.addData("RUNNIN", System.currentTimeMillis());
-                telemetry.update();
-
                 driveTrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
                 if (gamepad1.dpad_up) {

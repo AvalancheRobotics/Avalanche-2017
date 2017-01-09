@@ -99,24 +99,23 @@ public class Auto extends LinearOpMode {
         if (teamColor.equals(TeamColor.RED)) {
 
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 10, 0);
-            autoDriveTrain.pivotToAngle(57, .6);
-            autoDriveTrain.moveDistanceAtSpeedOnHeadingFloat(43, 57, 1000);
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, -3, 57);
+            //autoDriveTrain.pivotToAngle(60, .4);
+            autoDriveTrain.pivotToAngle(60, .45, .004, .05, 3, 5000);
+            autoDriveTrain.moveDistanceAtSpeedOnHeadingFloat(45, 60, 1000);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, -3.5, 60);
             autoDriveTrain.pivotToAngle(0, .1);
             beaconPresser.setPresserToDrivePosition();
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 5, 0);
+            autoDriveTrain.driveToLine(5000, true);
+            beaconPresser.startButtonPress(5500, 0);
+            Thread.sleep(1500);
+            autoDriveTrain.pivotToAngle(0, .1);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 45, 0);
             autoDriveTrain.driveToLine(6000, true);
-            autoDriveTrain.pivotToAngle(0, .1);
-            beaconPresser.startButtonPress(5000, 0);
-            beaconPresser.setPresserToDrivePosition();
-            Thread.sleep(1000);
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 42, 0);
-            autoDriveTrain.driveToLine(6000, true);
-            autoDriveTrain.pivotToAngle(0, .1);
-            beaconPresser.startButtonPress(5000, 0);
-            beaconPresser.setPresserToDrivePosition();
+            beaconPresser.startButtonPress(5500, 0);
 
-            autoDriveTrain.pivotToAngle(37, .6);
+            autoDriveTrain.pivotToAngle(37, .6, .004, .05, 3, 3500);
+
+            //autoDriveTrain.pivotToAngle(37, .6);
 
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.7, -25, 37);
 
@@ -130,7 +129,8 @@ public class Auto extends LinearOpMode {
         } else {
 
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -10, 0);
-            autoDriveTrain.pivotToAngle(-57, .6);
+                    autoDriveTrain.pivotToAngle(-57, .6);
+            autoDriveTrain.pivotToAngle(-60, .5, .004, .05, 3, 5000);
             autoDriveTrain.moveDistanceAtSpeedOnHeadingFloat(-45, -57, 1000);
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, 3, -57);
             autoDriveTrain.pivotToAngle(0, .1);
