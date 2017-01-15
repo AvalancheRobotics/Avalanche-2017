@@ -250,7 +250,7 @@ public class AutoDriveTrainController {
         driveTrain.setPower(0);
     }
 
-    public void moveDistanceAtSpeedOnHeadingFloat(double distance, int heading) throws InterruptedException {
+    public void moveDistanceAtSpeedOnHeadingFloat(double distance, int heading, int floatTime) throws InterruptedException {
 
         // Ensure that the opmode is still active
         if (linearOpMode.opModeIsActive()) {
@@ -277,7 +277,13 @@ public class AutoDriveTrainController {
                 drivingBackwards = -1;
             }
 
+            double accelerationCoeff = .0006;
+            long startTime = System.currentTimeMillis();
+            double floor;
+
             while (drivingBackwards * odometerTarget > drivingBackwards * odometerCurrentPosition) {
+                 floor = ((System.currentTimeMillis() - startTime) * accelerationCoeff) + .4;
+
                 int distanceLeft = odometerTarget - odometerCurrentPosition;
                 odometerCurrentPosition = odometer.getCurrentPosition();
 
@@ -287,8 +293,8 @@ public class AutoDriveTrainController {
 
                 double steer = (heading - getCorrectedHeading()) * P_TURN_COEFF;
 
-                driveTrain.setLeftDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER, .035, 1, 1, -steer));
-                driveTrain.setRightDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER, .035, 1, 1, steer));
+                driveTrain.setLeftDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER, .0001, Math.min(floor, 1) , 1, -steer));
+                driveTrain.setRightDrivePower(getPower(distanceLeft / COUNTS_PER_INCH_ODOMETER, .0001, Math.min(floor, 1) , 1, steer));
 
                 driveTrain.setTargetPosition(0, odometerTicksToWheelTicks + driveTrain.getEncoderValue(0));
                 driveTrain.setTargetPosition(1, odometerTicksToWheelTicks + driveTrain.getEncoderValue(1));
@@ -312,9 +318,13 @@ public class AutoDriveTrainController {
             }
 
         }
+        driveTrain.setPower(0);
+
+        Thread.sleep(floatTime);
+
+        driveTrain.setZeroPowerBehavior(true);
 
         // Stop all motion;
-        driveTrain.setPower(0);
     }
 
     private double getPower(double inchesFromTarget, double porpConstant, double floor, double ceiling, double steer) {

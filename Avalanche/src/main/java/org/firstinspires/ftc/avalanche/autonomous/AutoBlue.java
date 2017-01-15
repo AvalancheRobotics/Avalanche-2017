@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoController;
-
 import org.firstinspires.ftc.avalanche.enums.TeamColor;
 import org.firstinspires.ftc.avalanche.subsystems.AutoDriveTrainController;
 import org.firstinspires.ftc.avalanche.subsystems.BeaconPresser;
@@ -20,8 +18,8 @@ import org.firstinspires.ftc.avalanche.utilities.ValueStore;
  * @author Keith
  */
 
-@Autonomous(name = "Auto Testing", group = "Autonomous")
-public class AutoTesting extends LinearOpMode {
+@Autonomous(name = "AutoBlue", group = "Autonomous")
+public class AutoBlue extends LinearOpMode {
 
     private static TeamColor teamColor = TeamColor.BLUE;
 
@@ -95,121 +93,95 @@ public class AutoTesting extends LinearOpMode {
 
         autoDriveTrain.callAtBeginningOfOpModeAfterInit();
 
-        autoDriveTrain.moveDistanceAtSpeedOnHeadingFloat(30, autoDriveTrain.getCorrectedHeading(), 1500);
+        autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -10, 0);
+        //autoDriveTrain.pivotToAngle(-60, .4);
+        autoDriveTrain.pivotToAngle(-60, .5, .004, .05, 3, 5000);
+        autoDriveTrain.moveDistanceAtSpeedOnHeadingFloat(-45, -60, 1000);
+        autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, 3.5, -60);
+        autoDriveTrain.pivotToAngle(0, .1);
+        beaconPresser.setPresserToDrivePosition();
+        autoDriveTrain.driveToLine(5000, false);
+        autoDriveTrain.pivotToAngle(0, .1);
+        beaconPresser.startButtonPress(5500, 0);
+        Thread.sleep(1800);
+        autoDriveTrain.pivotToAngle(0, .1);
+        autoDriveTrain.moveDistanceAtSpeedOnHeading(.5, -45, 0);
+        autoDriveTrain.driveToLine(6000, false);
+        beaconPresser.startButtonPress(5500, 0);
 
-        Thread.sleep(3000);
+        autoDriveTrain.pivotToAngle(127, .5, .004, .05, 3, 5000);
 
-        autoDriveTrain.moveDistanceAtSpeedOnHeadingFloat(-30, autoDriveTrain.getCorrectedHeading(), 1500);
+        autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -27, 127);
 
-        Thread.sleep(3000);
+        launchOneBall();
 
+        loadAndLaunch();
 
-        autoDriveTrain.pivotToAngle(0, .6);
-        Thread.sleep(2000);
-        telemetry.addData("" + 0, autoDriveTrain.getCorrectedHeading());
-        autoDriveTrain.pivotToAngle(5, .6);
-        Thread.sleep(2000);
-        telemetry.addData("" + 5, autoDriveTrain.getCorrectedHeading());
-        autoDriveTrain.pivotToAngle(90, .6);
-        Thread.sleep(2000);
-        telemetry.addData("" + 90, autoDriveTrain.getCorrectedHeading());
-        autoDriveTrain.pivotToAngle(-180, .6);
-        Thread.sleep(2000);
-        telemetry.addData("" + -180, autoDriveTrain.getCorrectedHeading());
-        autoDriveTrain.pivotToAngle(94, .6);
-        Thread.sleep(2000);
-        telemetry.addData("" + 94, autoDriveTrain.getCorrectedHeading());
-        autoDriveTrain.pivotToAngle(42, .6);
-        Thread.sleep(2000);
-        telemetry.addData("" + 42, autoDriveTrain.getCorrectedHeading());
-        autoDriveTrain.pivotToAngle(70, .6);
-        Thread.sleep(2000);
-        telemetry.addData("" + 70, autoDriveTrain.getCorrectedHeading());
-        autoDriveTrain.pivotToAngle(0, .6);
-        Thread.sleep(2000);
-        telemetry.addData("" + 0, autoDriveTrain.getCorrectedHeading());
+        autoDriveTrain.pivotToAngle(140, .6);
 
-        telemetry.update();
+        autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -28, 140);
 
-        while (opModeIsActive()) {
-            idle();
-        }
-    }
-
-
-
-/* TOO SLOW - DOESN'T GET PAST BUTTON PRESSING
-        if (teamColor.equals(TeamColor.RED)) {
+       /* if (teamColor.equals(TeamColor.RED)) {
 
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 10, 0);
-            autoDriveTrain.pivotToAngle(61, .6);
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 52.5, 61);
-            autoDriveTrain.pivotToAngle(0, .1);
+            autoDriveTrain.pivotToAngle(62, .6);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, 55, 61);
+            autoDriveTrain.pivotToAngle(0, .6);
             beaconPresser.setPresserToDrivePosition();
             autoDriveTrain.driveToLine(6000, true);
             autoDriveTrain.pivotToAngle(0, .1);
-            //beaconPresser.startButtonPress(8000, 0);
+            beaconPresser.startButtonPress(4000, 50);
             beaconPresser.setPresserToDrivePosition();
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, 36, 0);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.5, 38, 0);
             autoDriveTrain.driveToLine(6000, true);
             autoDriveTrain.pivotToAngle(0, .1);
-            //beaconPresser.startButtonPress(8000, 0);
+            beaconPresser.startButtonPress(4000, 50);
             beaconPresser.setPresserToDrivePosition();
 
-            autoDriveTrain.pivotToAngle(37, .4);
+            autoDriveTrain.pivotToAngle(37, .6);
 
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, -30, 37);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.7, -25, 37);
 
             launchOneBall();
 
             loadAndLaunch();
 
-            autoDriveTrain.pivotToAngle(50, .4);
+            autoDriveTrain.pivotToAngle(50, .6);
 
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.4, -30, 50);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -25, 50);
         } else {
 
             autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -10, 0);
             autoDriveTrain.pivotToAngle(-61, .6);
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -52.5, -61);
-            autoDriveTrain.pivotToAngle(0, .1);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -51, -61);
+            autoDriveTrain.pivotToAngle(0, .6);
             beaconPresser.setPresserToDrivePosition();
             autoDriveTrain.driveToLine(6000, false);
             autoDriveTrain.pivotToAngle(0, .1);
-            //beaconPresser.startButtonPress(8000, 3);
+            beaconPresser.startButtonPress(8000, 50);
             beaconPresser.setPresserToDrivePosition();
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, -36, 0);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.5, -38, 0);
             autoDriveTrain.driveToLine(6000, false);
             autoDriveTrain.pivotToAngle(0, .1);
-            //beaconPresser.startButtonPress(8000, 3);
+            beaconPresser.startButtonPress(8000, 50);
             beaconPresser.setPresserToDrivePosition();
 
-            autoDriveTrain.pivotToAngle(127, .4);
+            autoDriveTrain.pivotToAngle(127, .6);
 
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.3, -30, 127);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.7, -27, 127);
 
             launchOneBall();
 
             loadAndLaunch();
 
-            autoDriveTrain.pivotToAngle(140, .4);
+            autoDriveTrain.pivotToAngle(140, .6);
 
-            autoDriveTrain.moveDistanceAtSpeedOnHeading(.4, -30, 140);
+            autoDriveTrain.moveDistanceAtSpeedOnHeading(.6, -28, 140);
         }
 
         */
 
-
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        // Put a hold after each turn
-        //autoDriveTrain.moveDistanceAtSpeedOnHeading(1, 48.0);        // Drive FWD 48 inches
-        //autoDriveTrain.moveDistanceAtSpeedOnHeading(1, -48.0);       // Drive REV 48 inches
-
-        //autoDriveTrain.moveDistanceAtSpeedOnHeading(autoDriveTrain.DRIVE_SPEED, 57.0, 45); //Drive FWD 57 inches 45 degrees
-        //autoDriveTrain.moveDistanceAtSpeedOnHeading(autoDriveTrain.DRIVE_SPEED, 35.0, -45); //Drive FWD 35 inches -45 degrees
-
-
+    }
 
     private void loadAndLaunch() throws InterruptedException {
         servoLock.setPosition(ValueStore.LOCK_RELEASE);
@@ -221,7 +193,6 @@ public class AutoTesting extends LinearOpMode {
         Thread.sleep(750);
 
         launchOneBall();
-        ServoController controller = hardwareMap.servoController.get("servos");
     }
 
 
