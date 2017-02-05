@@ -9,14 +9,19 @@
         <Servo name="BeaconShuttle" port="2" />
         <Servo name="BeaconTilt" port="3" />
     </ServoController>
-    <MotorController name="Shooter + Harvester" serialNumber="A104ORVS">
-        <Motor name="Harvester" port="1" />
-        <Motor name="Shooter" port="2" />
-    </MotorController>
     <DeviceInterfaceModule name="Device Interface Module" serialNumber="AL00VC2B">
         <Gyro name="Gyro" port="0" />
         <ColorSensor name="lineLeft" port="1" />
         <ColorSensor name="lineRight" port="3" />
         <ColorSensor name="colorRight" port="4" />
         <ColorSensor name="colorLeft" port="5" />
-    </DeviceInt
+    </DeviceInterfaceModule>
+    <MotorController name="Shooter + Harvester" serialNumber="A104ORVS">
+        <Motor name="Harvester" port="1" />
+        <Motor name="Shooter" port="2" />
+    </MotorController>
+    <MotorController name="Front Drive" serialNumber="A7008ONK">
+        <Motor name="LeftFront" port="1" />
+        <Motor name="RightFront" port="2" />
+    </MotorController>
+</Robot>
