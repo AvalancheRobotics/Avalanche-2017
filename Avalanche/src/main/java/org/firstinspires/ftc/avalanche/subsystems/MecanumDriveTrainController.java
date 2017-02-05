@@ -150,9 +150,6 @@ public class MecanumDriveTrainController extends MotorController {
 
 
             double angle = Math.atan2(xInput, -yInput);
-            if (-yInput < 0) {
-                angle = (2 * Math.PI + angle);
-            }
 
 
             leftFrontPower = power * Math.sin(angle + (Math.PI / 4)) + turnInput;

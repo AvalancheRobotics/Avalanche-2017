@@ -44,6 +44,10 @@ public class ValueStore {
 
     public static final int ONE_SHOOTER_LOOP = 1600; //ARBITRARY VALUE
 
+    public static final double LIFT_HELD = ARBITRARYDOUBLE;
+
+    public static final double LIFT_RELEASED = ARBITRARYDOUBLE;
+
     //Motor Positions
 
 }
