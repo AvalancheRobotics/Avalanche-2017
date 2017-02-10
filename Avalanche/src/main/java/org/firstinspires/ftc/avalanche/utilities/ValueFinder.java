@@ -10,14 +10,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "Value Finder", group = "Utilities")
 public class ValueFinder extends LinearOpMode {
 
-    private Servo beaconTilt;
-    private Servo beaconShuttle;
-    private Servo lock;
+    Servo servoLock;
+
+    Servo servoLiftRelease;
+
+    Servo servoSpacerOne;
+    Servo servoSpacerTwo;
+
 
     private DcMotor shooter;
+    private DcMotor motorLiftOne;
+    private DcMotor motorLiftTwo;
 
     private int currentIndex;
-    private int totalDevices = 4;
+    private int totalDevices = 6;
     private boolean isServo;
     private String deviceName;
 
@@ -25,20 +31,38 @@ public class ValueFinder extends LinearOpMode {
     private void hardwareMapping() throws InterruptedException {
         currentIndex = 0;
 
-        beaconTilt = hardwareMap.servo.get("BeaconTilt");
-        beaconShuttle = hardwareMap.servo.get("BeaconShuttle");
-        lock = hardwareMap.servo.get("Lock");
+        //Initialize lock
+        servoLock = hardwareMap.servo.get("Lock");
+        servoLock.setPosition(ValueStore.LOCK_LOAD);
+
+        //Initialize lift release
+        servoLiftRelease = hardwareMap.servo.get("LiftRelease");
+        servoLiftRelease.setPosition(ValueStore.LIFT_HELD);
+
+
+        //Initialize spacer servos
+        servoSpacerOne = hardwareMap.servo.get("SpacerOne");
+        servoSpacerTwo = hardwareMap.servo.get("SpacerTwo");
+
+        servoSpacerOne.setPosition(ValueStore.SPACER_ONE_STORE);
+        servoSpacerTwo.setPosition(ValueStore.SPACER_TWO_STORE);
+
         shooter = hardwareMap.dcMotor.get("Shooter");
-
-
-        beaconTilt.setPosition(ValueStore.BUTTON_PRESSER_STORE_ANGLE);
-        beaconShuttle.setPosition(ValueStore.BUTTON_PRESSER_RETRACTED);
-        lock.setPosition(ValueStore.LOCK_LOAD);
-
         shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setPower(0);
+
+        motorLiftOne = hardwareMap.dcMotor.get("LiftOne");
+        motorLiftTwo = hardwareMap.dcMotor.get("LiftTwo");
+        motorLiftOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLiftTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLiftOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLiftTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLiftOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLiftTwo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLiftOne.setPower(0);
+        motorLiftTwo.setPower(0);
     }
 
     @Override
@@ -75,27 +99,39 @@ public class ValueFinder extends LinearOpMode {
 
 
             if (currentIndex == 0) {
-                currentServo = beaconShuttle;
+                currentServo = servoLiftRelease;
                 isServo = true;
-                deviceName = "Beacon Shuttle";
+                deviceName = "Lift Release";
             }
 
             if (currentIndex == 1) {
-                currentServo = beaconTilt;
+                currentServo = servoLock;
                 isServo = true;
-                deviceName = "Beacon Tilt";
+                deviceName = "Servo Lock";
             }
 
             if (currentIndex == 2) {
-                currentServo = lock;
+                currentServo = servoSpacerOne;
                 isServo = true;
-                deviceName = "Lock";
+                deviceName = "Spacer One";
             }
 
             if (currentIndex == 3) {
+                currentServo = servoSpacerTwo;
+                isServo = true;
+                deviceName = "Spacer Two";
+            }
+
+            if (currentIndex == 4) {
                 currentMotor = shooter;
                 isServo = false;
                 deviceName = "Shooter";
+            }
+
+            if (currentIndex == 5) {
+                currentMotor = motorLiftOne;
+                isServo = false;
+                deviceName = "Lift";
             }
 
 
@@ -105,8 +141,16 @@ public class ValueFinder extends LinearOpMode {
                 telemetry.addData(deviceName, currentServo.getPosition());
             }
             else {
-                currentMotor.setPower(ScaleInput.scale(gamepad1.left_stick_y));
-                telemetry.addData(deviceName, currentMotor.getCurrentPosition());
+
+                if (deviceName.equals("Lift")) {
+                    motorLiftOne.setPower(gamepad1.left_stick_y);
+                    motorLiftTwo.setPower(gamepad1.left_stick_y);
+                    telemetry.addData("motor1: " + motorLiftOne.getCurrentPosition(), "motor2: " + motorLiftTwo.getCurrentPosition());
+                }
+                else {
+                    currentMotor.setPower(ScaleInput.scale(gamepad1.left_stick_y));
+                    telemetry.addData(deviceName, currentMotor.getCurrentPosition());
+                }
             }
 
             telemetry.update();

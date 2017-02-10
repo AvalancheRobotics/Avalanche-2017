@@ -16,7 +16,7 @@ public class MecanumTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        MecanumDriveTrainController driveTrain = new MecanumDriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
+        MecanumDriveTrainController driveTrain = new MecanumDriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap), this);
 
         waitForStart();
 

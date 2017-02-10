@@ -38,16 +38,68 @@ public class ValueStore {
     //Button presser's time to move from the measuring position to the pressing position
     public static final double TIME_TO_BUTTON_PRESS_FROM_MEASURE_DISTANCE_MILLIS = 2000; //ARBITRARY
 
+    public static final double LOCK_LOAD = .0853;
+
+    public static final double LOCK_RELEASE = 0.4672;
+
+    public static final int ONE_SHOOTER_LOOP = 1600; //ARBITRARY VALUE
+
+    public static final double LIFT_HELD = 0.413;
+
+    public static final double LIFT_RELEASED = 0;
+
+    public static final double SPACER_ONE_STORE = .241;
+
+    public static final double SPACER_TWO_STORE = 0.7534;
+
+    public static final double SPACER_ONE_EXTENDED = 0.8264;
+
+    public static final double SPACER_TWO_EXTENDED = 0.1637;
+
+    //Motor Positions
+
+    public static final int SLIDE_STORE = 0;
+
+    public static final int SLIDE_DRIVE = -520;
+
+    public static final int SLIDE_CAP = -2700;
+
+}
+
+
+//OLD BOT
+
+/*
+    //Distance to extend button presser to before reaching beacon
+    public static final double BUTTON_PRESSER_DRIVING = .55;
+
+    //Distance to extend button presser to press button
+    public static final double BUTTON_PRESSER_PRESSED = .9228;
+
+    //Button presser's stowed position
+    public static final double BUTTON_PRESSER_RETRACTED = .17146;
+
+    //Distance to extend button presser to measure colors
+    public static final double BUTTON_PRESSER_MEASURE = .76;
+
+    //Button presser's stowed angle
+    public static final double BUTTON_PRESSER_STORE_ANGLE = 0.55;
+
+    //Button presser's right button pressing angle
+    public static final double BUTTON_PRESSER_RIGHT_ANGLE = 0.85;
+
+    //Button presser's left pressing angle
+    public static final double BUTTON_PRESSER_LEFT_ANGLE = 0.245;
+
+    //Button presser's time to move from the measuring position to the pressing position
+    public static final double TIME_TO_BUTTON_PRESS_FROM_MEASURE_DISTANCE_MILLIS = 2000; //ARBITRARY
+
     public static final double LOCK_LOAD = .0966;
 
     public static final double LOCK_RELEASE = .3834;
 
     public static final int ONE_SHOOTER_LOOP = 1600; //ARBITRARY VALUE
 
-    public static final double LIFT_HELD = ARBITRARYDOUBLE;
+    public static final double LIFT_HELD = 0.413;
 
-    public static final double LIFT_RELEASED = ARBITRARYDOUBLE;
-
-    //Motor Positions
-
-}
+ */

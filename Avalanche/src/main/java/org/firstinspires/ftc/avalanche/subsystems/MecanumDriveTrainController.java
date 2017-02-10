@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.avalanche.subsystems;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.avalanche.hardware.MotorLeftBack;
@@ -20,6 +21,8 @@ public class MecanumDriveTrainController extends MotorController {
 
     private boolean usingGyro;
 
+    private LinearOpMode opMode;
+
     private ModernRoboticsI2cGyro gyro;
 
     private long startTime;
@@ -28,7 +31,7 @@ public class MecanumDriveTrainController extends MotorController {
 
     //Constructors
 
-    public MecanumDriveTrainController(MotorLeftBack motorLeftBack, MotorRightBack motorRightBack, MotorLeftFront motorLeftFront, MotorRightFront motorRightFront) {
+    public MecanumDriveTrainController(MotorLeftBack motorLeftBack, MotorRightBack motorRightBack, MotorLeftFront motorLeftFront, MotorRightFront motorRightFront, LinearOpMode opMode) {
 
 
         add(motorLeftBack.getMotor());
@@ -45,6 +48,8 @@ public class MecanumDriveTrainController extends MotorController {
         setPower(0);
 
         setZeroPowerBehavior(true);
+
+        this.opMode = opMode;
 
         usingGyro = false;
     }
@@ -88,6 +93,75 @@ public class MecanumDriveTrainController extends MotorController {
         reverseMotors(3);
     }
 
+    /** TO DO : MAKE THIS DEGREES INSTEAD OF RADIANS */
+    public void driveSpeedAtAngleForDistance(double power, double angle, double inches) throws InterruptedException {
+        int ticksNeeded = (int) (inches * 1120 / (4 * Math.PI));
+
+        double leftFrontPower;
+        double rightFrontPower;
+        double leftBackPower;
+        double rightBackPower;
+
+        leftFrontPower = power * Math.sin(angle + (Math.PI / 4));
+
+        rightFrontPower = power * Math.cos(angle + (Math.PI / 4));
+
+        leftBackPower = power * Math.cos(angle + (Math.PI / 4));
+
+        rightBackPower = power * Math.sin(angle + (Math.PI / 4));
+
+
+        double[] powers = new double[4];
+        powers[0] = leftBackPower;
+        powers[1] = rightBackPower;
+        powers[2] = leftFrontPower;
+        powers[3] = rightFrontPower;
+
+        double curHighest = Math.abs(powers[0]);
+
+        for (double highest: powers) {
+
+            double absHighest = Math.abs(highest);
+            if (absHighest > curHighest) {
+                curHighest = absHighest;
+            }
+        }
+
+        if (curHighest > 1) {
+            leftFrontPower = leftFrontPower / curHighest;
+            rightFrontPower = rightFrontPower / curHighest;
+            leftBackPower = leftBackPower / curHighest;
+            rightBackPower = rightBackPower / curHighest;
+        }
+
+        resetEncoders();
+
+        setPower(0, leftBackPower);
+        setPower(1, rightBackPower);
+        setPower(2, leftFrontPower);
+        setPower(3, rightFrontPower);
+
+        int highestTicks = 0;
+        while (highestTicks < ticksNeeded) {
+            if (highestTicks < Math.abs(getLeftBackEncoder())) {
+                highestTicks = Math.abs(getLeftBackEncoder());
+            }
+            if (highestTicks < Math.abs(getRightBackEncoder())) {
+                highestTicks = Math.abs(getRightBackEncoder());
+            }
+            if (highestTicks < Math.abs(getLeftFrontEncoder())) {
+                highestTicks = Math.abs(getLeftFrontEncoder());
+            }
+            if (highestTicks < Math.abs(getRightFrontEncoder())) {
+                highestTicks = Math.abs(getRightFrontEncoder());
+            }
+
+            opMode.idle();
+        }
+
+        setPower(0);
+
+    }
 
     /** TO DO : MAKE THIS DEGREES INSTEAD OF RADIANS */
     public void driveAtSpeedOnAngle(double power, double angle) {
@@ -135,6 +209,51 @@ public class MecanumDriveTrainController extends MotorController {
         setPower(3, rightFrontPower);
     }
 
+    public void turnUsingEncoders(double power, int encoderTicks, boolean turningLeft) throws InterruptedException {
+        resetEncoders();
+        if (turningLeft) {
+            setLeftBackTarget(-encoderTicks);
+            setLeftFrontTarget(-encoderTicks);
+            setRightBackTarget(encoderTicks);
+            setRightFrontTarget(encoderTicks);
+            setLeftBackPower(-power);
+            setLeftFrontPower(-power);
+            setRightBackPower(power);
+            setRightFrontPower(power);
+        }
+        else {
+            setLeftBackTarget(encoderTicks);
+            setLeftFrontTarget(encoderTicks);
+            setRightBackTarget(-encoderTicks);
+            setRightFrontTarget(-encoderTicks);
+            setLeftBackPower(power);
+            setLeftFrontPower(power);
+            setRightBackPower(-power);
+            setRightFrontPower(-power);
+        }
+
+        int highestTicks = 0;
+        while (highestTicks < encoderTicks) {
+            if (highestTicks < Math.abs(getLeftBackEncoder())) {
+                highestTicks = Math.abs(getLeftBackEncoder());
+            }
+            if (highestTicks < Math.abs(getRightBackEncoder())) {
+                highestTicks = Math.abs(getRightBackEncoder());
+            }
+            if (highestTicks < Math.abs(getLeftFrontEncoder())) {
+                highestTicks = Math.abs(getLeftFrontEncoder());
+            }
+            if (highestTicks < Math.abs(getRightFrontEncoder())) {
+                highestTicks = Math.abs(getRightFrontEncoder());
+            }
+
+            opMode.idle();
+        }
+
+        setPower(0);
+
+    }
+
     //Functions by taking inputs (most likely joystick) and squaring them, providing more precise controls when moving slowly
     //When joysticks are not in use, the wheels lock in place using PID
     public void manualDrive(float xInput, float yInput, float turnInput) {
@@ -151,6 +270,8 @@ public class MecanumDriveTrainController extends MotorController {
 
             double angle = Math.atan2(xInput, -yInput);
 
+            opMode.telemetry.addData("Angle", angle / Math.PI);
+            opMode.telemetry.update();
 
             leftFrontPower = power * Math.sin(angle + (Math.PI / 4)) + turnInput;
 
@@ -192,6 +313,7 @@ public class MecanumDriveTrainController extends MotorController {
 
         }
     }
+
 
     public void setLeftBackPower(double power) {
         setPower(0, power);

@@ -26,8 +26,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 @TeleOp(name = "TeleOpV2", group = "TeleOp")
 public class TeleOpV2 extends LinearOpMode {
 
-    private ControllerConfig controls;
-
     MecanumDriveTrainController driveTrain;
 
     DcMotor motorHarvester;
@@ -42,13 +40,15 @@ public class TeleOpV2 extends LinearOpMode {
 
     Servo servoLiftRelease;
 
-    boolean singleController = false;
+    Servo servoSpacerOne;
+    Servo servoSpacerTwo;
+
+    int currentLiftStage = 0;
 
 
     private void hardwareMapping() {
-        driveTrain = new MecanumDriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap));
+        driveTrain = new MecanumDriveTrainController(new MotorLeftBack(hardwareMap), new MotorRightBack(hardwareMap), new MotorLeftFront(hardwareMap), new MotorRightFront(hardwareMap), this);
 
-        driveTrain.reverseMotors();
 
         //Initialize harvester
         motorHarvester = hardwareMap.dcMotor.get("Harvester");
@@ -72,8 +72,18 @@ public class TeleOpV2 extends LinearOpMode {
         motorLiftOne = hardwareMap.dcMotor.get("LiftOne");
         motorLiftTwo = hardwareMap.dcMotor.get("LiftTwo");
 
-        motorLiftOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLiftTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLiftOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLiftTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorLiftOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLiftTwo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        motorLiftOne.setTargetPosition(ValueStore.SLIDE_STORE);
+        motorLiftTwo.setTargetPosition(ValueStore.SLIDE_STORE);
+
+        motorLiftOne.setPower(1);
+        motorLiftTwo.setPower(1);
+
 
         motorLiftOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLiftTwo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -87,6 +97,13 @@ public class TeleOpV2 extends LinearOpMode {
         servoLiftRelease = hardwareMap.servo.get("LiftRelease");
         servoLiftRelease.setPosition(ValueStore.LIFT_HELD);
 
+
+        //Initialize spacer servos
+        servoSpacerOne = hardwareMap.servo.get("SpacerOne");
+        servoSpacerTwo = hardwareMap.servo.get("SpacerTwo");
+
+        servoSpacerOne.setPosition(ValueStore.SPACER_ONE_STORE);
+        servoSpacerTwo.setPosition(ValueStore.SPACER_TWO_STORE);
     }
 
     @Override
@@ -162,13 +179,70 @@ public class TeleOpV2 extends LinearOpMode {
                 driveTrain.setZeroPowerBehavior(false);
             }
 
+            if (ScaleInput.scale(gamepad2.right_stick_y) != 0 && gamepad2.left_stick_y != 0) {
+                if (motorLiftOne.getMode().equals(DcMotor.RunMode.RUN_USING_ENCODER)) {
+                    motorLiftOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    motorLiftTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
 
-
-            motorLiftOne.setPower(ScaleInput.scale(gamepad1.left_stick_y));
-            motorLiftTwo.setPower(ScaleInput.scale(gamepad1.left_stick_y));
+                motorLiftOne.setPower(gamepad2.left_stick_y);
+                motorLiftTwo.setPower(gamepad2.left_stick_y);
+            }
+            else {
+                if (motorLiftOne.getMode().equals(DcMotor.RunMode.RUN_USING_ENCODER)) {
+                    motorLiftOne.setPower(0);
+                    motorLiftTwo.setPower(0);
+                }
+            }
 
             if (gamepad2.dpad_left) {
                 servoLiftRelease.setPosition(ValueStore.LIFT_RELEASED);
+            }
+
+            if (gamepad2.dpad_up || gamepad2.dpad_down) {
+                if (gamepad2.dpad_up) {
+                    currentLiftStage++;
+                } else {
+                    currentLiftStage--;
+                }
+
+                if (currentLiftStage > 2) {
+                    currentLiftStage = 0;
+                }
+
+                if (motorLiftOne.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)) {
+                    motorLiftOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    motorLiftTwo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
+
+                if (currentLiftStage == 0) {
+                    motorLiftOne.setTargetPosition(ValueStore.SLIDE_STORE);
+                    motorLiftTwo.setTargetPosition(ValueStore.SLIDE_STORE);
+                }
+
+                if (currentLiftStage == 1) {
+                    motorLiftOne.setTargetPosition(ValueStore.SLIDE_DRIVE);
+                    motorLiftTwo.setTargetPosition(ValueStore.SLIDE_DRIVE);
+                }
+
+                if (currentLiftStage == 2) {
+                    motorLiftOne.setTargetPosition(ValueStore.SLIDE_CAP);
+                    motorLiftTwo.setTargetPosition(ValueStore.SLIDE_CAP);
+                }
+
+                motorLiftOne.setPower(-1);
+                motorLiftTwo.setPower(-1);
+
+            }
+
+            if (gamepad2.dpad_right) {
+                if (servoSpacerOne.getPosition() == ValueStore.SPACER_ONE_STORE) {
+                    servoSpacerOne.setPosition(ValueStore.SPACER_ONE_EXTENDED);
+                    servoSpacerTwo.setPosition(ValueStore.SPACER_TWO_EXTENDED);
+                } else {
+                    servoSpacerOne.setPosition(ValueStore.SPACER_ONE_STORE);
+                    servoSpacerTwo.setPosition(ValueStore.SPACER_TWO_STORE);
+                }
             }
 
         }
